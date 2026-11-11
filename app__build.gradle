@@ -1,0 +1,3 @@
+plugins { id 'com.android.application' }
+android { namespace 'com.mosaedy.app'; compileSdk 35
+ defaultConfig { applicationId 'com.mosaedy.app'; minSdk 26; targetSdk 35; versionCode 1; versionName '0.1' } }

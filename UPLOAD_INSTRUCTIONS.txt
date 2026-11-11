@@ -1,0 +1,1 @@
+All files in this ZIP are at one level. Upload them together to GitHub. The build workflow must be created separately to reconstruct the original Android directory structure. Do not rename files.
