@@ -1,72 +1,187 @@
-name: Build Mosaedy Android APK
+name: Build Mosaedy Android APK (Clean 3.1)
 
 on:
-  workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - 'M3__*'
-      - 'M3_MANIFEST.json'
-      - '.github/workflows/android.yml'
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: mosaedy-clean-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
+    name: Build verified Mosaedy 3.1
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout repository
+      - name: Checkout Mosaedy
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up Java 17
+      - name: Verify source and create a clean Android project
+        env:
+          STAGING: ${{ runner.temp }}/mosaedy-clean-source
+        run: |
+          python3 - <<'PYTHON'
+          import os, json, hashlib, shutil
+          from pathlib import Path
+
+          root = Path.cwd()
+          dst = Path(os.environ['STAGING'])
+          dst.mkdir(parents=True, exist_ok=True)
+          manifest = root / 'M3_MANIFEST.json'
+          if manifest.is_file():
+              obj = json.loads(manifest.read_text(encoding='utf-8'))
+              items = obj.get('entries', [])
+              assert len(items) >= 20, 'Expected full Android 3.1 package, not legacy APK code'
+              for item in items:
+                  name = item['upload_name']
+                  rel = Path(item['original_path'])
+                  assert name.startswith('M3__') and '/' not in name and '\\' not in name
+                  assert not rel.is_absolute() and '..' not in rel.parts
+                  source = root / name
+                  assert source.is_file(), 'Missing uploaded file: ' + name
+                  content = source.read_bytes()
+                  assert hashlib.sha256(content).hexdigest() == item['sha256'], 'Checksum mismatch: ' + name
+                  target = dst / rel
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  target.write_bytes(content)
+              print('VERIFIED: 3.1 flat files restored to proper Android directories')
+          else:
+              # After cleanup, sources live in the conventional Android directory layout.
+              for path in ('app', 'build.gradle', 'settings.gradle', 'gradle.properties',
+                           'README_AR.md', 'TEST_PLAN_AR.md', '.gitignore'):
+                  source = root / path
+                  if source.is_dir():
+                      shutil.copytree(source, dst/path, ignore=shutil.ignore_patterns('build', '.gradle'), dirs_exist_ok=True)
+                  elif source.is_file():
+                      shutil.copy2(source, dst/path)
+              print('VERIFIED: building the already-clean Android project')
+          required = [
+              'app/build.gradle', 'app/src/main/AndroidManifest.xml',
+              'app/src/main/assets/index.html', 'app/src/main/assets/mosaedy_parser.js',
+              'app/src/main/java/com/mosaedy/assistant/MainActivity.java',
+              'app/src/main/java/com/mosaedy/assistant/AlarmRingingService.java'
+          ]
+          for item in required:
+              assert (dst/item).is_file(), 'Missing required Android source: ' + item
+          html = (dst/'app/src/main/assets/index.html').read_text(encoding='utf-8')
+          assert 'Android • 3.1 Beta' in html and 'var(--purple)' in html, 'Wrong UI: refusing to build the old version'
+          assert 'التاريخ' in html and 'ألارم' in html, 'Reminder features absent'
+          print('VERIFIED: Mosaedy purple 3.1 interface, alarms and date/time inputs')
+          PYTHON
+
+      - name: Check JavaScript and Android manifest
+        env:
+          STAGING: ${{ runner.temp }}/mosaedy-clean-source
+        run: |
+          node --check "$STAGING/app/src/main/assets/mosaedy_parser.js"
+          python3 - <<'PYTHON'
+          import xml.etree.ElementTree as ET, os
+          from pathlib import Path
+          root=Path(os.environ['STAGING'])
+          ET.parse(root/'app/src/main/AndroidManifest.xml')
+          ET.parse(root/'app/src/main/res/values/strings.xml')
+          print('JavaScript and Android XML checks passed')
+          PYTHON
+
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle 8.7
+      - name: Setup Android SDK without deprecated tools package
+        uses: android-actions/setup-android@v4
+        with:
+          packages: ''
+          log-accepted-android-sdk-licenses: 'false'
+
+      - name: Install Android 35 build packages
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+
+      - name: Setup Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
+      - name: Build Mosaedy 3.1 debug APK
+        working-directory: ${{ runner.temp }}/mosaedy-clean-source
+        run: gradle --no-daemon --stacktrace assembleDebug
 
-      - name: Install Android 35 SDK
-        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
-
-      - name: Reconstruct project from flat files
-        shell: bash
+      - name: Ensure APK exists
+        env:
+          STAGING: ${{ runner.temp }}/mosaedy-clean-source
         run: |
-          python3 - <<'PY_RESTORE'
-          import pathlib, json, hashlib
-          root = pathlib.Path.cwd()
-          out = (root / '_build_project').resolve()
-          manifest = json.loads((root / 'M3_MANIFEST.json').read_text(encoding='utf-8'))
-          for entry in manifest['entries']:
-              src = root / entry['upload_name']
-              if not src.is_file():
-                  raise FileNotFoundError(f'Missing uploaded file: {src.name}')
-              actual = hashlib.sha256(src.read_bytes()).hexdigest()
-              if actual != entry['sha256']:
-                  raise RuntimeError(f'Corrupted file: {src.name}')
-              dst = (out / entry['original_path']).resolve()
-              if not dst.is_relative_to(out):
-                  raise ValueError(f'Invalid destination: {dst}')
-              dst.parent.mkdir(parents=True, exist_ok=True)
-              dst.write_bytes(src.read_bytes())
-          print(f"Restored {len(manifest['entries'])} Android source files")
-          PY_RESTORE
+          test -s "$STAGING/app/build/outputs/apk/debug/app-debug.apk"
+          ls -lh "$STAGING/app/build/outputs/apk/debug/app-debug.apk"
 
-      - name: Build debug APK
-        run: gradle --no-daemon -p _build_project :app:assembleDebug
-
-      - name: Upload downloadable APK
+      - name: Upload ONLY the new Mosaedy APK
         uses: actions/upload-artifact@v4
         with:
-          name: Mosaedy-Android-APK
-          path: _build_project/app/build/outputs/apk/debug/app-debug.apk
+          name: Mosaedy-3.1-NEW-DESIGN-APK
+          path: ${{ runner.temp }}/mosaedy-clean-source/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Back up old main before cleaning it
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        run: |
+          if test -f M3_MANIFEST.json; then
+            TAG="mosaedy-backup-before-clean-${GITHUB_RUN_ID}"
+            git tag "$TAG" "$GITHUB_SHA"
+            git push origin "refs/tags/$TAG"
+            echo "Backup code tag created: $TAG"
+          else
+            echo "Source is already clean; no new backup needed"
+          fi
+
+      - name: Replace old root files with ONLY verified new sources
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        env:
+          STAGING: ${{ runner.temp }}/mosaedy-clean-source
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          import os, shutil, subprocess
+
+          root=Path.cwd()
+          src=Path(os.environ['STAGING'])
+          if not (root/'M3_MANIFEST.json').is_file():
+              print('Already cleaned: no action')
+              raise SystemExit(0)
+          # GitHub's default GITHUB_TOKEN cannot change .github/workflows files.
+          # Preserve those; user deletes obsolete workflows through GitHub UI afterward.
+          tracked=subprocess.check_output(['git', 'ls-files', '-z']).split(b'\0')
+          remove=[os.fsdecode(p) for p in tracked if p and not os.fsdecode(p).startswith('.github/workflows/')]
+          if not (src/'app/src/main/assets/index.html').is_file():
+              raise SystemExit('No verified app source; refusing deletion')
+          if not any(p == 'M3_MANIFEST.json' for p in remove):
+              raise SystemExit('Missing manifest; refusing deletion')
+          for n in remove:
+              subprocess.run(['git', 'rm', '--quiet', '--force', '--', n], check=True)
+          for entry in src.iterdir():
+              if entry.name == '.github':
+                  raise SystemExit('Unexpected workflow directory in staged source')
+              destination=root/entry.name
+              if entry.is_dir():
+                  shutil.copytree(entry, destination, ignore=shutil.ignore_patterns('build', '.gradle'), dirs_exist_ok=True)
+              elif entry.is_file():
+                  shutil.copy2(entry, destination)
+          subprocess.run(['git','add','-A'], check=True)
+          staged=subprocess.check_output(['git','diff','--cached','--name-only','-z']).split(b'\0')
+          assert staged, 'No changes staged'
+          assert all(not os.fsdecode(p).startswith('.github/workflows/') for p in staged if p), 'Workflow file modification not allowed'
+          print(f'Staged {len(staged)-1} clean project changes; existing workflows preserved')
+          PYTHON
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Mosaedy: replace old files with verified Android 3.1 sources'
+            git push origin HEAD:main
+          fi
