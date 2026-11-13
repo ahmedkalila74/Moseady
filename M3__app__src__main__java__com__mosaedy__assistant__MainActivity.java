@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ public class MainActivity extends Activity {
     private static final int REQ_IMPORT = 1003;
     private static final int REQ_NOTIFICATION = 1004;
     private static final int REQ_WAKE_MIC = 1005;
+    private static final int REQ_RINGTONE = 1006;
     private static WeakReference<MainActivity> instance = new WeakReference<>(null);
     private boolean visible = false;
     private WebView web;
@@ -55,7 +57,8 @@ public class MainActivity extends Activity {
 
         tts = new TextToSpeech(getApplicationContext(), status -> {
             if (status == TextToSpeech.SUCCESS && tts != null) {
-                int result = tts.setLanguage(new Locale("ar", "EG"));
+                String lang = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar");
+                int result = tts.setLanguage("en".equals(lang) ? Locale.US : new Locale("ar", "EG"));
                 ttsReady = result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED;
             }
         });
@@ -102,7 +105,8 @@ public class MainActivity extends Activity {
     private void openFromWake(Intent intent){if(intent==null)return;
         callJs("window.openTab && window.openTab('assistant')");
         String command=intent.getStringExtra("wake_command");
-        if(command!=null&&!command.trim().isEmpty())callJs("window.handleMessage && window.handleMessage("+JSONObject.quote(command)+")");
+        if(command!=null&&!command.trim().isEmpty()) callJs("window.handleMessage && window.handleMessage("+JSONObject.quote(command)+")");
+        else callJs("window.onWakeDetected && window.onWakeDetected('wake','')");
     }
     private void beginWakeService(){
         try{Intent i=new Intent(this,WakeWordService.class);i.setAction(WakeWordService.ACTION_START);
@@ -111,12 +115,48 @@ public class MainActivity extends Activity {
         }catch(Exception e){showMessage("تعذر بدء الاستماع على الجهاز ده");}
     }
     private void showMessage(String message) {
-        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
+        boolean en = "en".equals(getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar"));
+        if (en) {
+            if (message.contains("بدأت جلسة الاستماع")) message = "Wake listening session started";
+            else if (message.contains("تعذر بدء الاستماع")) message = "Could not start the listening session on this device";
+            else if (message.contains("تم السماح بالإشعارات")) message = "Notifications permission granted";
+            else if (message.contains("الإشعارات غير مفعّلة")) message = "Notifications are disabled; reminders may not appear";
+            else if (message.contains("تم حفظ نغمة الألارم")) message = "Alarm sound saved";
+            else if (message.contains("تم تصدير المواعيد")) message = "Backup exported successfully";
+            else if (message.contains("تعذر حفظ النسخة")) message = "Could not save the backup";
+            else if (message.contains("تم استيراد")) message = "Reminders imported successfully";
+            else if (message.contains("الملف غير صالح")) message = "The backup file is invalid or could not be read";
+            else if (message.contains("لا يمكن الاستماع")) message = "Microphone permission is required for wake listening";
+        }
+        final String display = message;
+        runOnUiThread(() -> Toast.makeText(this, display, Toast.LENGTH_LONG).show());
     }
 
     public class Bridge {
         @JavascriptInterface public String getReminders() {
             return ReminderStore.all(getApplicationContext()).toString();
+        }
+        @JavascriptInterface public String getHistory() {
+            return ReminderStore.history(getApplicationContext()).toString();
+        }
+        @JavascriptInterface public String getSettings() {
+            try {
+                android.content.SharedPreferences settings = getSharedPreferences("mosaedy_settings", MODE_PRIVATE);
+                android.content.SharedPreferences wake = getSharedPreferences("mosaedy_wake_v32", MODE_PRIVATE);
+                JSONObject out = new JSONObject();
+                out.put("language", settings.getString("language", "ar"));
+                out.put("timeFormat", settings.getString("time_format", "12"));
+                out.put("snoozeOptions", settings.getString("snooze_options", "5,10,15"));
+                out.put("alarmToneUri", settings.getString("alarm_tone_uri", ""));
+                out.put("defaultMode", settings.getString("default_mode", "alarm"));
+                out.put("wakePhrase", wake.getString("custom", ""));
+                out.put("wakeAutoMic", wake.getBoolean("autoMic", true));
+                return out.toString();
+            } catch (Exception e) { return "{}"; }
+        }
+        @JavascriptInterface public void completeReminder(String id) {
+            ReminderScheduler.cancel(getApplicationContext(), id);
+            ReminderStore.archive(getApplicationContext(), id, "completed");
         }
 
         @JavascriptInterface public String saveReminder(String raw) {
@@ -134,7 +174,48 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface public void deleteReminder(String id) {
             ReminderScheduler.cancel(getApplicationContext(), id);
-            ReminderStore.remove(getApplicationContext(), id);
+            ReminderStore.archive(getApplicationContext(), id, "cancelled");
+        }
+        @JavascriptInterface public void configureSnoozeOptions(String csv) {
+            StringBuilder safe = new StringBuilder();
+            if (csv != null) for (String item : csv.split(",")) {
+                try {
+                    int n = Integer.parseInt(item.trim());
+                    if (n >= 1 && n <= 180 && safe.indexOf("," + n + ",") < 0) safe.append(n).append(',');
+                } catch (Exception ignored) { }
+            }
+            String value = safe.length() == 0 ? "5,10,15" : safe.substring(0, safe.length()-1);
+            getApplicationContext().getSharedPreferences("mosaedy_settings", MODE_PRIVATE).edit().putString("snooze_options", value).apply();
+        }
+        @JavascriptInterface public void chooseAlarmTone() {
+            runOnUiThread(() -> {
+                try {
+                    Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "اختيار نغمة ألارم مساعدي");
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+                    String saved = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("alarm_tone_uri", "");
+                    if (!saved.isEmpty()) intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(saved));
+                    startActivityForResult(intent, REQ_RINGTONE);
+                } catch (Exception e) { showMessage("تعذر فتح نغمات الهاتف"); }
+            });
+        }
+        @JavascriptInterface public void setTimeFormat(String format) {
+            getApplicationContext().getSharedPreferences("mosaedy_settings", MODE_PRIVATE).edit().putString("time_format", "24".equals(format) ? "24" : "12").apply();
+        }
+        @JavascriptInterface public void setDefaultMode(String mode) {
+            getApplicationContext().getSharedPreferences("mosaedy_settings", MODE_PRIVATE).edit().putString("default_mode", "notification".equals(mode) ? "notification" : "alarm").apply();
+        }
+        @JavascriptInterface public void setAppLanguage(String language) {
+            String safe = "en".equals(language) ? "en" : "ar";
+            getApplicationContext().getSharedPreferences("mosaedy_settings", MODE_PRIVATE).edit().putString("language", safe).apply();
+            runOnUiThread(() -> {
+                if (tts != null) {
+                    int result = tts.setLanguage("en".equals(safe) ? Locale.US : new Locale("ar", "EG"));
+                    ttsReady = result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED;
+                }
+            });
         }
 
         @JavascriptInterface public String capabilities() {
@@ -145,6 +226,7 @@ public class MainActivity extends Activity {
                 obj.put("ttsReady", ttsReady);
                 obj.put("android", Build.VERSION.SDK_INT);
                 obj.put("wakeSession",WakeWordService.isActive());
+                obj.put("microphoneAllowed", Build.VERSION.SDK_INT < 23 || checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED);
                 return obj.toString();
             } catch (Exception e) { return "{}"; }
         }
@@ -198,9 +280,11 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> {
                 Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ar-EG");
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "ar-EG");
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "اتفضل، قول لمساعدي طلبك");
+                String lang = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar");
+                String locale = "en".equals(lang) ? "en-US" : "ar-EG";
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, locale);
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "en".equals(lang) ? "Tell Mosaedy what you need" : "اتفضل، قول لمساعدي طلبك");
                 try { startActivityForResult(intent, REQ_SPEECH); }
                 catch (ActivityNotFoundException e) {
                     callJs("window.onVoiceError && window.onVoiceError('خدمة التعرف على الصوت غير متوفرة على الجهاز')");
@@ -211,7 +295,11 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void speak(String text) {
             if (text == null || text.length() > 600) return;
             runOnUiThread(() -> {
-                if (tts != null && ttsReady) tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "mosaedy_reply");
+                if (tts != null && ttsReady) {
+                    String lang = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar");
+                    tts.setLanguage("en".equals(lang) ? Locale.US : new Locale("ar", "EG"));
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "mosaedy_reply");
+                }
             });
         }
 
@@ -243,6 +331,12 @@ public class MainActivity extends Activity {
             if (results != null && !results.isEmpty()) {
                 callJs("window.onSpeechCandidates && window.onSpeechCandidates(" + new JSONArray(results).toString() + ")");
             }
+        } else if (requestCode == REQ_RINGTONE) {
+            Uri picked = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            String value = picked == null ? "" : picked.toString();
+            getSharedPreferences("mosaedy_settings", MODE_PRIVATE).edit().putString("alarm_tone_uri", value).apply();
+            showMessage("تم حفظ نغمة الألارم");
+            callJs("window.onAlarmToneSaved && window.onAlarmToneSaved()");
         } else if (requestCode == REQ_SAVE) {
             try (OutputStream stream = getContentResolver().openOutputStream(data.getData())) {
                 if (stream == null) throw new Exception("No output");
@@ -250,6 +344,14 @@ public class MainActivity extends Activity {
                 root.put("format", "mosaedy-native-backup");
                 root.put("version", 1);
                 root.put("reminders", ReminderStore.all(this));
+                root.put("history", ReminderStore.history(this));
+                root.put("settings", new JSONObject().put("language", getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar"))
+                    .put("snooze_options", getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("snooze_options", "5,10,15"))
+                    .put("time_format", getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("time_format", "12"))
+                    .put("alarm_tone_uri", getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("alarm_tone_uri", ""))
+                    .put("default_mode", getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("default_mode", "alarm"))
+                    .put("wake_phrase", getSharedPreferences("mosaedy_wake_v32", MODE_PRIVATE).getString("custom", ""))
+                    .put("wake_auto_mic", getSharedPreferences("mosaedy_wake_v32", MODE_PRIVATE).getBoolean("autoMic", true)));
                 stream.write(root.toString(2).getBytes(StandardCharsets.UTF_8));
                 showMessage("تم تصدير المواعيد بنجاح");
             } catch (Exception e) { showMessage("تعذر حفظ النسخة الاحتياطية"); }
@@ -268,6 +370,19 @@ public class MainActivity extends Activity {
                 boolean legacyBackup = "Mosaedy".equals(json.optString("app"));
                 if (!nativeBackup && !legacyBackup) throw new Exception("Wrong format");
                 JSONArray items = nativeBackup ? json.getJSONArray("reminders") : json.getJSONArray("tasks");
+                if (nativeBackup && json.has("history")) ReminderStore.replaceHistory(this, json.optJSONArray("history"));
+                if (nativeBackup && json.has("settings")) {
+                    JSONObject settings = json.optJSONObject("settings");
+                    if (settings != null) getSharedPreferences("mosaedy_settings", MODE_PRIVATE).edit()
+                        .putString("language", settings.optString("language", "ar"))
+                        .putString("snooze_options", settings.optString("snooze_options", "5,10,15"))
+                        .putString("time_format", settings.optString("time_format", "12"))
+                        .putString("alarm_tone_uri", settings.optString("alarm_tone_uri", ""))
+                        .putString("default_mode", settings.optString("default_mode", "alarm")).apply();
+                    if (settings != null) getSharedPreferences("mosaedy_wake_v32", MODE_PRIVATE).edit()
+                        .putString("custom", settings.optString("wake_phrase", ""))
+                        .putBoolean("autoMic", settings.optBoolean("wake_auto_mic", true)).apply();
+                }
                 int count = 0;
                 for (int i = 0; i < items.length(); i++) {
                     JSONObject r = items.optJSONObject(i);
@@ -278,12 +393,13 @@ public class MainActivity extends Activity {
                         candidate.put("title", r.optString("title"));
                         candidate.put("repeat", r.optString("repeat", "none"));
                         candidate.put("mode", r.optString("mode", "alarm"));
+                        candidate.put("notes", r.optString("notes", ""));
                         long due;
                         if (nativeBackup) due = r.optLong("dueAt");
                         else due = java.time.Instant.parse(r.optString("when")).toEpochMilli();
                         if (due <= System.currentTimeMillis()) {
                             String repeat = candidate.optString("repeat");
-                            if (!"daily".equals(repeat) && !"weekly".equals(repeat)) continue;
+                            if (!"daily".equals(repeat) && !"weekly".equals(repeat) && !"monthly".equals(repeat)) continue;
                             due = ReminderScheduler.nextOccurrence(due, repeat, System.currentTimeMillis());
                         }
                         candidate.put("dueAt", due);
@@ -294,6 +410,7 @@ public class MainActivity extends Activity {
                     } catch (Exception ignored) { }
                 }
                 showMessage("تم استيراد " + count + " موعد");
+                callJs("window.nativeSettingsChanged && window.nativeSettingsChanged()");
                 callJs("window.nativeRefresh && window.nativeRefresh()");
             } catch (Exception e) { showMessage("الملف غير صالح أو تعذر قراءته"); }
         }

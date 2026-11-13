@@ -42,21 +42,22 @@ public class WakeWordService extends Service implements RecognitionListener {
     public static boolean isActive(){return active;}
 
     @Override public void onCreate(){super.onCreate();
-        NotificationChannel channel = new NotificationChannel(CHANNEL,"استماع مساعدي التجريبي",NotificationManager.IMPORTANCE_LOW);
-        channel.setDescription("جلسة محدودة يفعّلها المستخدم، مع زر إيقاف واضح");
+        boolean en = "en".equals(getSharedPreferences("mosaedy_settings", Context.MODE_PRIVATE).getString("language", "ar"));
+        NotificationChannel channel = new NotificationChannel(CHANNEL,en ? "Mosaedy wake session" : "استماع مساعدي التجريبي",NotificationManager.IMPORTANCE_LOW);
+        channel.setDescription(en ? "A user-started, time-limited session with a visible stop control" : "جلسة محدودة يفعّلها المستخدم، مع زر إيقاف واضح");
         NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         nm.createNotificationChannel(channel);
     }
     private PendingIntent stopAction(){Intent i=new Intent(this,WakeWordService.class);i.setAction(ACTION_STOP);
         return PendingIntent.getService(this,1,i,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);}
-    private Notification ongoing(){Intent i=new Intent(this,MainActivity.class);i.putExtra("open_assistant",true);
+    private Notification ongoing(){boolean en="en".equals(getSharedPreferences("mosaedy_settings", Context.MODE_PRIVATE).getString("language", "ar"));Intent i=new Intent(this,MainActivity.class);i.putExtra("open_assistant",true);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent p=PendingIntent.getActivity(this,9300,i,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         return new Notification.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_btn_speak_now)
-           .setContentTitle("🎙️ مساعدي بيسمع كلمة النداء")
-           .setContentText("جلسة تجريبية ٥ دقائق — اضغط للفتح أو الإيقاف")
+           .setContentTitle(en ? "🎙️ Mosaedy is listening for your wake phrase" : "🎙️ مساعدي بيسمع كلمة النداء")
+           .setContentText(en ? "Experimental 5-minute session — tap to open or stop" : "جلسة تجريبية ٥ دقائق — اضغط للفتح أو الإيقاف")
            .setContentIntent(p).setOngoing(true).setCategory(Notification.CATEGORY_SERVICE)
-           .addAction(new Notification.Action.Builder(android.R.drawable.ic_media_pause,"إيقاف",stopAction()).build()).build();}
+           .addAction(new Notification.Action.Builder(android.R.drawable.ic_media_pause,en ? "Stop" : "إيقاف",stopAction()).build()).build();}
     @Override public int onStartCommand(Intent intent,int flags,int startId){
         String action=intent==null?"":intent.getAction();
         if(ACTION_STOP.equals(action)){stopSelf();return START_NOT_STICKY;}
@@ -80,7 +81,8 @@ public class WakeWordService extends Service implements RecognitionListener {
         if(stopping || recognizer==null || System.currentTimeMillis()>=expiresAt){stopSelf();return;}
         try{Intent intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ar-EG");
+            String language = getSharedPreferences("mosaedy_settings", Context.MODE_PRIVATE).getString("language", "ar");
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en".equals(language) ? "en-US" : "ar-EG");
             intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,3);
             awaitingResult=true;
@@ -94,11 +96,15 @@ public class WakeWordService extends Service implements RecognitionListener {
         String custom=normalize(prefs.getString("custom",""));
         for(String item:candidates){if(item==null)continue;String t=normalize(item);
             String match="";
+            String language = getSharedPreferences("mosaedy_settings", Context.MODE_PRIVATE).getString("language", "ar");
             if(t.contains("يا مساعدي"))match="يا مساعدي";
             else if(t.contains("مساعدي"))match="مساعدي";
-            else if(custom.length()>=3 && t.contains(custom))match=custom;
+            else if("en".equals(language) && t.toLowerCase(Locale.ROOT).contains("hey mosaedy"))match="hey mosaedy";
+            else if("en".equals(language) && t.toLowerCase(Locale.ROOT).contains("mosaedy"))match="mosaedy";
+            else if(custom.length()>=3 && t.toLowerCase(Locale.ROOT).contains(custom.toLowerCase(Locale.ROOT)))match=custom;
             if(match.isEmpty())continue;
-            String command=t.substring(Math.min(t.length(),t.indexOf(match)+match.length())).trim();
+            int matchAt = t.toLowerCase(Locale.ROOT).indexOf(match.toLowerCase(Locale.ROOT));
+            String command=t.substring(Math.min(t.length(), Math.max(0, matchAt) + match.length())).trim();
             onDetected(match,command);
             stopSelf(); // Stop the microphone before starting the new user command.
             break;
@@ -109,14 +115,15 @@ public class WakeWordService extends Service implements RecognitionListener {
         // Android prohibits reliably launching activities from the background or unlocking the phone.
         // Offer a user-controlled notification instead; the microphone remains subject to OS limits.
         NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        NotificationChannel ch=new NotificationChannel("mosaedy_wake_result_v32","تم سماع مساعدي",NotificationManager.IMPORTANCE_HIGH);
+        boolean en = "en".equals(getSharedPreferences("mosaedy_settings", Context.MODE_PRIVATE).getString("language", "ar"));
+        NotificationChannel ch=new NotificationChannel("mosaedy_wake_result_v32",en ? "Wake phrase detected" : "تم سماع مساعدي",NotificationManager.IMPORTANCE_HIGH);
         nm.createNotificationChannel(ch);
         Intent i=new Intent(this,MainActivity.class);i.putExtra("open_assistant",true);i.putExtra("wake_command",command);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pi=PendingIntent.getActivity(this,9301,i,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
-        Notification note=new Notification.Builder(this,ch.getId())
-            .setSmallIcon(android.R.drawable.ic_btn_speak_now).setContentTitle("سمعتك! افتح مساعدي")
-            .setContentText(command.isEmpty()?"اضغط عشان تتكلم أو تسجل تذكير":"اضغط لمراجعة طلبك")
+        Notification note=new Notification.Builder(this,ch)
+            .setSmallIcon(android.R.drawable.ic_btn_speak_now).setContentTitle(en ? "I heard you — open Mosaedy" : "سمعتك! افتح مساعدي")
+            .setContentText(command.isEmpty()?(en ? "Tap to speak or create a reminder" : "اضغط عشان تتكلم أو تسجل تذكير"):(en ? "Tap to review your request" : "اضغط لمراجعة طلبك"))
             .setAutoCancel(true).setContentIntent(pi).build();
         nm.notify(9302,note);
     }

@@ -1,57 +1,57 @@
 {
-  "application": "Mosaedy",
-  "project_version": "3.2.0-beta",
-  "description": "Flat upload for the existing Clean 3.1 GitHub workflow, restores Android source tree and verifies SHA256; mobile UI is 3.2",
+  "app": "Mosaedy",
+  "version": "3.3.0-beta",
+  "schema_version": 1,
   "entries": [
     {
       "upload_name": "M3__.gitignore",
       "original_path": ".gitignore",
-      "sha256": "7eccaf21df0f47e5583b66dceb1c5228c774563aaa948dab3d7ab39cb2b95d3f"
+      "sha256": "3d459d6190d77b4c8c2e4dcaa650556bc0259953eef3abb1dc3a669302888f49"
     },
     {
       "upload_name": "M3__README_AR.md",
       "original_path": "README_AR.md",
-      "sha256": "dc851c1f7b7d9d80b6ac84bd67d50eeef57c50d31450efd70d0cb341c75fa6e7"
+      "sha256": "efc0fefd76ee5f09dea09c8de63e9e4fba882caedc20eda87a0d2d74b2d5d5a1"
     },
     {
       "upload_name": "M3__TEST_PLAN_AR.md",
       "original_path": "TEST_PLAN_AR.md",
-      "sha256": "de08370d77f642542b9342989683fb5d14c6ac8fe5b19fb9fb108f79a8994d3d"
+      "sha256": "d385b212aee165aef87146600d4a789705b7292fbaf13036fa02e84fb74d7558"
     },
     {
       "upload_name": "M3__app__build.gradle",
       "original_path": "app/build.gradle",
-      "sha256": "4cf2ce2079941a468262a89e6029f43d42289586c90148b61639350a6abafc69"
+      "sha256": "fc1319886a694e72244adde5d9f4678a4c99b6b59440e6a1376e17fb05b2d537"
     },
     {
       "upload_name": "M3__app__src__main__AndroidManifest.xml",
       "original_path": "app/src/main/AndroidManifest.xml",
-      "sha256": "98e42ddf993299cc69b4f223ddde9b33bbadfb503f7741a35d8a35600ef4ab32"
+      "sha256": "bb11bffabb49c469a466aab5b849965f8f8ccac2b3546e80716f234f3e56584f"
     },
     {
       "upload_name": "M3__app__src__main__assets__index.html",
       "original_path": "app/src/main/assets/index.html",
-      "sha256": "2bf7144d856e9b6471d63defcfbf4ebba3fcdb00e4131c4f6d06d0dd0a2d5a60"
+      "sha256": "29c2c54f875a85d036d6c33663d1b0432121a45a3d80261a8265a60077da4213"
     },
     {
       "upload_name": "M3__app__src__main__assets__mosaedy_commands.js",
       "original_path": "app/src/main/assets/mosaedy_commands.js",
-      "sha256": "75db47b7dd9f69e9a00be364a34983fd038fae89e530efa065b48aa662e67368"
+      "sha256": "4cbde4b22ed521b4464f2869d8aa91b498e2332fcd46d04aa9e56e9e383f9d8b"
     },
     {
       "upload_name": "M3__app__src__main__assets__mosaedy_parser.js",
       "original_path": "app/src/main/assets/mosaedy_parser.js",
-      "sha256": "62da40d9ed049ba9d33c3688a918a187620ecad50225490c8c4dc014507325f9"
+      "sha256": "8c5658e6d35ba0b34066ab5cbdcd03a1e2c03a417e5582946caa624d3d3c901b"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__AlarmActivity.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/AlarmActivity.java",
-      "sha256": "45fa436ab35d76b1269ca6752a47847ee237157db403f07edf6cd53527ef0ee4"
+      "sha256": "a5fbcf4645dde476fb80f2ddb42450baca9bb0179f1111de94095105f6436040"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__AlarmRingingService.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/AlarmRingingService.java",
-      "sha256": "558886a3464d4bb5cf0655ff6d49398bea5a8c246e9309f9316b913fc96f8bd9"
+      "sha256": "2a6a912700ec4a779bdab47be867151d1dc5aa92ed32b68c18eebb73e8746011"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__BootReceiver.java",
@@ -61,37 +61,37 @@
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__MainActivity.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/MainActivity.java",
-      "sha256": "0ce26a72744f5ca77e9cfa73e38f30bf9d3f9912f65cc1f8c27e22e818054fc4"
+      "sha256": "9df45e64d1fb5c7621c654d802aa664a83b4c5407b7bd9ddc47d17183942a6b3"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__NotificationActionReceiver.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/NotificationActionReceiver.java",
-      "sha256": "a9e91c9bcbd4159506807f34f72a01ae98f9e7bc66a0f903bd11c679d39a5996"
+      "sha256": "3d7f2833db93c6c058df2507d6d0b1111f42dd2411594cb5eff40484b469e6b3"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderNotifier.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderNotifier.java",
-      "sha256": "34dbb72fdcf7da20028e6099466bdfb77f7a809baa54e56596b91a71c5f653a6"
+      "sha256": "59a98e23b36396b54997f7f803d60aaf946427fac1928a1a630617d710b00bb0"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderReceiver.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderReceiver.java",
-      "sha256": "0db26646ac82f1b5c01c794b2f92707bb2af275711fde139dab72257a13594d8"
+      "sha256": "467e3f7dbff3fd48c0a42347d2bc730f521f585658b0fdc9f0dc6130b205064a"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderScheduler.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderScheduler.java",
-      "sha256": "926165ccd7c861f9ebcb921a31668e5a41f237c060b2cad08fb81d3aa2fbeb72"
+      "sha256": "c3401094ed1ad3b9a3ad0a26dc0ce1ddb18267a236e65e373a74b137e5d9b925"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderStore.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderStore.java",
-      "sha256": "f90c2da292c261e9de53719305b498e7ca985e034c3f411ac9484c30ef47df66"
+      "sha256": "9e5fbd5c2588d6bbc63c1e50abac2402fe9d52aa0213564c9f4e68685c8d0a76"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__WakeWordService.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/WakeWordService.java",
-      "sha256": "9edf38ce3fdeb99637f94dc26e758dc06916ff321dffa91cb643e58c08e1e300"
+      "sha256": "ecfc2b1e13edc29d75681e4987cd712f8f6b1a02c6c8a91b78023be91476aa7c"
     },
     {
       "upload_name": "M3__app__src__main__res__drawable__ic_launcher.xml",
