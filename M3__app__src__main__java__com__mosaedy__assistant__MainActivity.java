@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.lang.ref.WeakReference;
 
 /** Android WebView for locally bundled UI; reminders, notifications, speech use Android APIs. */
 public class MainActivity extends Activity {
@@ -35,6 +36,9 @@ public class MainActivity extends Activity {
     private static final int REQ_SAVE = 1002;
     private static final int REQ_IMPORT = 1003;
     private static final int REQ_NOTIFICATION = 1004;
+    private static final int REQ_WAKE_MIC = 1005;
+    private static WeakReference<MainActivity> instance = new WeakReference<>(null);
+    private boolean visible = false;
     private WebView web;
     private TextToSpeech tts;
     private boolean ttsReady = false;
@@ -42,6 +46,7 @@ public class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance=new WeakReference<>(this);
         getWindow().setStatusBarColor(Color.rgb(17, 26, 57));
         getWindow().setNavigationBarColor(Color.rgb(248, 248, 255));
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
@@ -75,6 +80,7 @@ public class MainActivity extends Activity {
             @Override public void onPageFinished(WebView view, String url) {
                 pageLoaded = true;
                 callJs("window.nativeRefresh && window.nativeRefresh()");
+                if (getIntent() != null && getIntent().getBooleanExtra("open_assistant",false)) openFromWake(getIntent());
                 if (getIntent() != null && getIntent().getData() != null) {
                     callJs("window.openTab && window.openTab('tasks')");
                 }
@@ -90,6 +96,20 @@ public class MainActivity extends Activity {
         });
     }
 
+    public static void notifyWakeStatus(boolean active){MainActivity activity=instance.get();if(activity!=null)activity.callJs("window.onWakeStatus && window.onWakeStatus("+active+")");}
+    public static boolean deliverWake(String phrase,String command){MainActivity activity=instance.get();if(activity==null||!activity.visible||!activity.pageLoaded)return false;
+        activity.callJs("window.onWakeDetected && window.onWakeDetected("+JSONObject.quote(phrase)+","+JSONObject.quote(command)+")");return true;}
+    private void openFromWake(Intent intent){if(intent==null)return;
+        callJs("window.openTab && window.openTab('assistant')");
+        String command=intent.getStringExtra("wake_command");
+        if(command!=null&&!command.trim().isEmpty())callJs("window.handleMessage && window.handleMessage("+JSONObject.quote(command)+")");
+    }
+    private void beginWakeService(){
+        try{Intent i=new Intent(this,WakeWordService.class);i.setAction(WakeWordService.ACTION_START);
+            if(Build.VERSION.SDK_INT>=26)startForegroundService(i);else startService(i);
+            showMessage("بدأت جلسة الاستماع لمدة ٥ دقائق");
+        }catch(Exception e){showMessage("تعذر بدء الاستماع على الجهاز ده");}
+    }
     private void showMessage(String message) {
         runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
     }
@@ -124,6 +144,7 @@ public class MainActivity extends Activity {
                 obj.put("exactAlarmsAllowed", ReminderScheduler.exactAllowed(getApplicationContext()));
                 obj.put("ttsReady", ttsReady);
                 obj.put("android", Build.VERSION.SDK_INT);
+                obj.put("wakeSession",WakeWordService.isActive());
                 return obj.toString();
             } catch (Exception e) { return "{}"; }
         }
@@ -156,6 +177,23 @@ public class MainActivity extends Activity {
             });
         }
 
+        @JavascriptInterface public void configureWake(String phrase, boolean autoMic){
+            String custom=phrase==null?"":phrase.trim().replaceAll("\\s+"," ");
+            if(custom.length()>40)custom=custom.substring(0,40);
+            getApplicationContext().getSharedPreferences("mosaedy_wake_v32",MODE_PRIVATE)
+                .edit().putString("custom",custom).putBoolean("autoMic",autoMic).apply();
+        }
+        @JavascriptInterface public void startWakeSession(){
+            runOnUiThread(()->{
+                if(Build.VERSION.SDK_INT>=23 && checkSelfPermission(Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO},REQ_WAKE_MIC);
+                }else beginWakeService();
+            });
+        }
+        @JavascriptInterface public void stopWakeSession(){runOnUiThread(()->{
+            Intent i=new Intent(MainActivity.this,WakeWordService.class);i.setAction(WakeWordService.ACTION_STOP);
+            try{startService(i);}catch(Exception ignored){stopService(new Intent(MainActivity.this,WakeWordService.class));}
+        });}
         @JavascriptInterface public void startVoiceInput() {
             runOnUiThread(() -> {
                 Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -239,7 +277,7 @@ public class MainActivity extends Activity {
                         candidate.put("id", r.optString("id", "imported-" + i));
                         candidate.put("title", r.optString("title"));
                         candidate.put("repeat", r.optString("repeat", "none"));
-                        candidate.put("mode", r.optString("mode", "notification"));
+                        candidate.put("mode", r.optString("mode", "alarm"));
                         long due;
                         if (nativeBackup) due = r.optLong("dueAt");
                         else due = java.time.Instant.parse(r.optString("when")).toEpochMilli();
@@ -263,6 +301,10 @@ public class MainActivity extends Activity {
 
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_WAKE_MIC){
+            if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)beginWakeService();
+            else showMessage("لا يمكن الاستماع بدون السماح للميكروفون");
+        }
         if (requestCode == REQ_NOTIFICATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 showMessage("تم السماح بالإشعارات");
@@ -273,6 +315,7 @@ public class MainActivity extends Activity {
 
     @Override protected void onResume() {
         super.onResume();
+        visible=true;
         if (ReminderScheduler.exactAllowed(this)) ReminderScheduler.restoreAll(this);
         callJs("window.nativeRefresh && window.nativeRefresh()");
     }
@@ -280,8 +323,11 @@ public class MainActivity extends Activity {
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        if(intent.getBooleanExtra("open_assistant",false))openFromWake(intent);
         if (intent.getData() != null) callJs("window.openTab && window.openTab('tasks')");
     }
+
+    @Override protected void onPause(){visible=false;super.onPause();}
 
     @Override public void onBackPressed() {
         if (web != null && web.canGoBack()) web.goBack();
@@ -289,6 +335,7 @@ public class MainActivity extends Activity {
     }
 
     @Override protected void onDestroy() {
+        visible=false;if(instance.get()==this)instance=new WeakReference<>(null);
         if (tts != null) { tts.stop(); tts.shutdown(); tts = null; }
         if (web != null) { web.removeJavascriptInterface("AndroidBridge"); web.destroy(); web = null; }
         super.onDestroy();

@@ -17,7 +17,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         if (record == null) return; // deleted before scheduled firing
         long due = record.optLong("dueAt");
         if (due > System.currentTimeMillis() + 1500) return; // stale alarm
-        ReminderNotifier.show(context, id, record.optString("title"), record.optString("mode", "notification"));
+        ReminderNotifier.show(context, id, record.optString("title"), record.optString("mode", "alarm"));
         String repeat = record.optString("repeat", "none");
         if (repeat.equals("daily") || repeat.equals("weekly")) {
             long next = ReminderScheduler.nextOccurrence(due, repeat, System.currentTimeMillis());

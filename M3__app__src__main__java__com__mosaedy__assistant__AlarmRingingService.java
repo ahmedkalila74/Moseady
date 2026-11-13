@@ -16,7 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 
-/** User-selected audible alarms. Sound loops for at most 120 seconds, and can be stopped/snoozed. */
+/** User-selected audible alarms. Sound loops for at most 10 minutes, and can be stopped/snoozed. */
 public class AlarmRingingService extends Service {
     public static final String ACTION_START = "com.mosaedy.alarm.START";
     public static final String ACTION_STOP = "com.mosaedy.alarm.STOP";
@@ -114,7 +114,7 @@ public class AlarmRingingService extends Service {
             player.start();
         } catch (Exception ignored) { stopSound(); /* Notification still shows stop/snooze. */ }
         handler.removeCallbacks(timeout);
-        handler.postDelayed(timeout, 120000L);
+        handler.postDelayed(timeout, 600000L);
         return START_NOT_STICKY;
     }
 

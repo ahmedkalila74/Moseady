@@ -1,4 +1,4 @@
-/* Mosaedy 3.1 local Egyptian Arabic reminder parser. No AI or network calls. */
+/* Mosaedy 3.2 local Egyptian Arabic reminder parser. No AI or network calls. */
 (function (root) {
   'use strict';
   const AR = '٠١٢٣٤٥٦٧٨٩', FA = '۰۱۲۳۴۵۶۷۸۹';
@@ -13,15 +13,15 @@
   const relativeRe = new RegExp('(?:بعد|كمان|خلال|من دلوقتي بعد)\\s+('+wordNum+')\\s*('+unit+')','i');
   function unitMs(u){return /ثان/.test(u)?1000:/دق/.test(u)?60000:/ساع/.test(u)?3600000:/يوم|ايام|أيام/.test(u)?86400000:604800000;}
   function removeSpan(s,match){return match?s.slice(0,match.index)+' '+s.slice(match.index+match[0].length):s;}
-  function parse(input,nowMs){
+  function parse(input,nowMs,options={}){
     let text=normalized(input), now=new Date(nowMs==null?Date.now():nowMs);
     if(!text)return {ok:false,missing:'title',message:'قولّي محتاج أفكّرك بإيه.'};
     let due=null, rest=text, matchedTime=false, dayExplicit=false, dayOffset=0, meridiem=false;
     let relative=relativeRe.exec(text);
     if(relative){let n=val(relative[1]);if(Number.isFinite(n)&&n>=0){due=now.getTime()+Math.max(1000,Math.round(n*unitMs(relative[2])));rest=removeSpan(rest,relative);matchedTime=true;}}
     if(due===null){
-      let shorthand=/(?:بعد|كمان)\s+(ساعتين|يومين|نص\s+ساعة|نصف\s+ساعة|ربع\s+ساعة|نص\s+دقيقة|دقيقة|ثانية)/i.exec(text);
-      if(shorthand){let s=shorthand[1],delta=/ساعتين/.test(s)?7200000:/يومين/.test(s)?172800000:/ربع/.test(s)?900000:/نص|نصف/.test(s)?(/دقيقة/.test(s)?30000:1800000):/ثانية/.test(s)?1000:60000;due=now.getTime()+delta;rest=removeSpan(rest,shorthand);matchedTime=true;}
+      let shorthand=/(?:بعد|كمان)\s+(ساعتين|يومين|نص\s+ساعة|نصف\s+ساعة|ربع\s+ساعة|نص\s+دقيقة|ساعة|دقيقة|ثانية)/i.exec(text);
+      if(shorthand){let s=shorthand[1],delta=/ساعتين/.test(s)?7200000:/يومين/.test(s)?172800000:/ربع/.test(s)?900000:/نص|نصف/.test(s)?(/دقيقة/.test(s)?30000:1800000):/ثانية/.test(s)?1000:/ساعة/.test(s)?3600000:60000;due=now.getTime()+delta;rest=removeSpan(rest,shorthand);matchedTime=true;}
     }
     if(due===null && /(?:دلوقتي|حالاً|حالا|الان|الآن)/.test(text) && !/(?:الساعة|الساعه)/.test(text)){
       due=now.getTime()+3000;rest=rest.replace(/(?:دلوقتي|حالاً|حالا|الان|الآن)/g,' ');matchedTime=true;
@@ -68,7 +68,7 @@
         due=d.getTime();
       }
     }
-    let mode= /(?:بألارم|بالارم|مع رنين|بصوت منبه|رنين منبه|خليه منبه|خليها منبه)/.test(text)?'alarm':'notification';
+    let mode=/(?:بإشعار|باشعار|نوتيفيكيشن|notification|إشعار عادي)/.test(text)?'notification':/(?:بألارم|بالارم|مع رنين|بصوت منبه|رنين منبه|خليه منبه|خليها منبه|منبه)/.test(text)?'alarm':(options.defaultMode==='notification'?'notification':'alarm');
     rest=rest.replace(/(?:بألارم|بالارم|مع رنين|بصوت منبه|رنين منبه|خليه منبه|خليها منبه|بإشعار|باشعار|نوتيفيكيشن|notification)/gi,' ');
     rest=rest.replace(/(?:الصبح|صباحا|صباحًا|صباح|مساء|المسا|بالليل|بليل|العصر|المغرب|الضهر|الظهر|ليلا|ليلًا)/gi,' ');
     rest=rest.replace(/^(?:يا\s+مساعدي\s*)?(?:فكرني|فكريني|ذكرني|ذكريني|نبّهني|نبهني|اعمل\s*لي|اعمللي|اعمل|سجل\s*لي|سجلي|سجل|حط\s*لي|حطلي|ضيف\s*لي|ضيف|اضف|أضف|عايز|محتاج|خلي|خليها|خلّيها|لا\s+خليها)\s*/i,' ')

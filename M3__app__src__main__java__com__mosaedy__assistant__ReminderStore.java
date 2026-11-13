@@ -32,7 +32,7 @@ public final class ReminderStore {
         String title = reminder.optString("title", "").trim();
         long due = reminder.optLong("dueAt", 0);
         String repeat = reminder.optString("repeat", "none");
-        String mode = reminder.optString("mode", "notification");
+        String mode = reminder.optString("mode", "alarm");
         if (id.isEmpty() || id.length() > 100 || title.isEmpty() || title.length() > 160 ||
             due <= System.currentTimeMillis() ||
             !(repeat.equals("none") || repeat.equals("daily") || repeat.equals("weekly")) ||

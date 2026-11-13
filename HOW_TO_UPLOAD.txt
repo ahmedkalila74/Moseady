@@ -1,0 +1,6 @@
+Mosaedy 3.2
+1) Unzip. Upload ALL M3__* files AND M3_MANIFEST.json to GitHub repository root (main) as one batch. HOW_TO_UPLOAD.txt optional.
+2) Actions > Build Mosaedy Android APK (Clean 3.1) > Run workflow.
+3) Download APK from THIS run Artifacts. Build artifact may still say 3.1 because workflow name remains old; app displays Android 3.2.
+4) Backup reminders before reinstalling; old debug signatures may differ.
+5) Wake words experimental for a 5-minute opt-in session, not always-on or automatic unlock.

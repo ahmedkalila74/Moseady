@@ -35,7 +35,7 @@ public final class ReminderScheduler {
         String id = reminder.optString("id");
         long due = reminder.optLong("dueAt");
         if (id.isEmpty() || due <= System.currentTimeMillis()) return;
-        scheduleAlarm(context, due, pending(context, id, reminder.optString("title"), false, reminder.optString("mode","notification")), "alarm".equals(reminder.optString("mode","notification")), id);
+        scheduleAlarm(context, due, pending(context, id, reminder.optString("title"), false, reminder.optString("mode","alarm")), "alarm".equals(reminder.optString("mode","alarm")), id);
     }
 
     public static void snooze(Context context, String id, String title, String mode) {
