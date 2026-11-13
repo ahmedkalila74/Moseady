@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#111a39">
+<title>مساعدي | النسخة الأندرويد</title>
+<style>
+:root{--navy:#111a39;--navy2:#27265f;--purple:#7869ee;--purple2:#5a51ce;--lilac:#eae7ff;--txt:#192349;--muted:#8087a5;--bg:#f7f8fe;--line:#e9ebf7;--success:#118f72;--error:#ce4861;--card:#fff;--radius:21px;--shadow:0 10px 35px rgba(38,37,99,.055)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Tahoma,Arial,sans-serif}body{color:var(--txt);background:var(--bg);-webkit-tap-highlight-color:transparent}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #b7aeff;outline-offset:2px}
+#app{max-width:600px;margin:auto;padding-bottom:108px;min-height:100vh}.top{padding:24px 20px 22px;background:linear-gradient(125deg,#111a39 12%,#2c2865 67%,#5946a7 100%);border-radius:0 0 32px 32px;color:#fff;position:relative;overflow:hidden}.top:before,.top:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.11)}.top:before{width:200px;height:200px;top:-120px;left:-80px}.top:after{width:150px;height:150px;bottom:-110px;left:40px}.brand{display:flex;align-items:center;gap:11px;position:relative;z-index:1}.logo{width:46px;height:46px;flex:none;border-radius:15px;background:linear-gradient(135deg,#9b8dff,#7364e8);display:grid;place-items:center;box-shadow:0 6px 24px #12123a45;font-size:26px}.brand b{font-size:24px;display:block}.brand small{display:block;font-size:11px;opacity:.75;margin-top:3px}.badge{margin-inline-start:auto;border:1px solid #ffffff42;border-radius:30px;color:#fff;font-size:10px;padding:6px 10px;background:#ffffff14}
+.hero{position:relative;z-index:1;margin-top:26px;display:flex;align-items:center;justify-content:space-between;gap:12px}.hero h1{font-size:24px;margin:0 0 7px}.hero p{font-size:12px;color:#d5d3ed;line-height:1.9;margin:0}.orb{width:95px;height:95px;border-radius:50%;display:grid;place-items:center;flex:none;background:radial-gradient(circle at 30% 25%,#beb5ff,#8071ef 55%,#5343b7);border:5px solid #ffffff18;box-shadow:0 10px 32px #05061755;position:relative}.orb i{width:51px;height:35px;border:3px solid #fff;border-radius:15px;position:relative}.orb i:before,.orb i:after{content:"";position:absolute;background:#fff;width:7px;height:7px;top:11px;border-radius:50%}.orb i:before{right:9px}.orb i:after{left:9px}.orb s{position:absolute;bottom:17px;width:21px;height:4px;background:#fff;border-radius:5px}
+main{padding:18px 16px}.view{display:none}.view.active{display:block}.banner{background:#fff9e9;border:1px solid #f2e3b7;border-radius:15px;padding:12px 13px;color:#795e24;margin-bottom:13px;font-size:12px;line-height:1.9;display:flex;align-items:center;gap:9px}.banner button{border:0;border-radius:10px;padding:8px 11px;background:#dfca94;color:#5b471e;white-space:nowrap;font-weight:bold}.banner.info{color:#454a87;background:#f0efff;border-color:#dddafe}.banner.info button{color:#fff;background:var(--purple)}.hidden{display:none!important}.section-title{display:flex;justify-content:space-between;align-items:center;margin:17px 2px 12px}.section-title b{font-size:16px}.section-title small{font-size:11px;color:var(--muted)}.card{background:var(--card);border:1px solid #eff0fa;box-shadow:var(--shadow);border-radius:var(--radius)}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.metric{padding:18px 16px;min-height:116px;position:relative;overflow:hidden}.metric b{font-size:30px;display:block;margin:8px 0 4px}.metric small{font-size:11px;color:var(--muted)}.metric .emoji{position:absolute;top:14px;left:16px;font-size:23px}.action-card{margin-top:13px;padding:17px;background:linear-gradient(135deg,#eeeaff,#faf9ff);border:1px solid #e5e0ff;border-radius:19px;display:flex;justify-content:space-between;align-items:center;gap:10px}.action-card h3{font-size:15px;margin:0 0 7px}.action-card p{font-size:11px;color:#706c95;line-height:1.8;margin:0}.btn{border:0;background:var(--purple);color:white;padding:12px 18px;border-radius:13px;font-size:12px;font-weight:bold;white-space:nowrap;box-shadow:0 5px 12px #7566e833}.btn.secondary{background:#f0edff;color:#6254c9;box-shadow:none}.btn.light{background:#fff;color:#5042ae;box-shadow:none;border:1px solid #e7e2ff}.btn.danger{background:#fff0f2;color:#cb4761;box-shadow:none}.btn.full{width:100%}.quick{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px}.quick button{white-space:nowrap;border:1px solid #e8e6f7;background:#fff;color:#544f85;border-radius:12px;padding:11px 13px;font-size:12px}.empty{text-align:center;padding:30px 16px;color:var(--muted);font-size:12px;line-height:2}.empty i{font-style:normal;font-size:40px;display:block;margin-bottom:9px}.task{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:15px;margin-bottom:10px}.task .marker{width:41px;height:41px;display:grid;place-items:center;border-radius:14px;background:#efecff;flex:none;font-size:20px}.task-body{flex:1;min-width:0}.task strong{display:block;font-size:13px;overflow-wrap:anywhere;margin-bottom:8px}.task .meta{font-size:11px;color:var(--muted);line-height:1.8}.task .actions{display:flex;gap:5px;flex:none}.mini{border:0;background:#f6f4ff;color:#635cc4;border-radius:9px;padding:8px 9px;font-size:12px}.mini.delete{color:#c35366;background:#fff0f2}.heading{font-size:18px;margin:4px 0 5px}.subheading{font-size:12px;color:var(--muted);line-height:1.9;margin:0 0 16px}.composer{display:flex;gap:7px;align-items:center;margin-top:10px}.composer input{width:100%;min-width:0;flex:1;border:1px solid #e2e4f2;border-radius:14px;background:white;padding:14px 12px;font-size:12px;color:var(--txt)}.send,.mic{width:46px;height:46px;flex:none;display:grid;place-items:center;border:none;border-radius:14px;font-size:19px;background:var(--purple);color:white}.mic{background:#ece9ff;color:#5b51c8}.chat{height:min(52vh,430px);overflow-y:auto;padding:16px 11px;background:#f0f1fb;border:1px solid #e5e8f5;border-radius:20px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}.bubble{background:#fff;padding:12px 14px;max-width:91%;font-size:12px;line-height:2;border-radius:16px 16px 5px 16px;white-space:pre-wrap;overflow-wrap:anywhere;align-self:flex-start;box-shadow:0 3px 15px #1b2e5410}.bubble.me{background:#ddd9ff;align-self:flex-end;border-radius:16px 16px 16px 5px}.suggestions{display:flex;gap:7px;overflow:auto;margin-top:13px}.suggestions button{font-size:11px;border:1px solid #e6e3f6;background:white;color:#655b9f;border-radius:12px;padding:9px 11px;white-space:nowrap}
+.status-card{padding:17px;margin-bottom:12px}.status-line{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:10px 0}.status-line b{font-size:12px}.status-line small{display:block;font-size:11px;color:var(--muted);margin-top:7px;line-height:1.8}.tag{background:#e4f7f0;color:#108666;padding:7px 11px;border-radius:20px;font-size:10px;white-space:nowrap}.tag.off{background:#fff1f0;color:#c75362}.status-card p{font-size:12px;color:var(--muted);line-height:1.9}.settings-btns{display:flex;gap:10px;flex-wrap:wrap}.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-top:1px solid #eeeefa;font-size:13px}.toggle-row input{accent-color:#7869ee;width:20px;height:20px}.footnote{font-size:11px;color:#8a8fa5;line-height:2.1;padding:10px 3px 0}.bottom{position:fixed;bottom:0;right:0;left:0;background:#fff;border-top:1px solid #edf0fa;display:flex;align-items:center;justify-content:space-around;max-width:600px;margin:auto;padding:10px 12px calc(9px + env(safe-area-inset-bottom));box-shadow:0 -6px 28px #2a3f8010;z-index:20}.bottom button{border:0;background:none;color:#969ab2;min-width:76px;padding:3px 0 5px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px}.bottom button span{font-size:23px}.bottom button.active{color:#695dd8;font-weight:bold}.modal-back{position:fixed;inset:0;background:#0a0d22a3;z-index:30;display:none;align-items:end;justify-content:center}.modal-back.open{display:flex}.modal{width:100%;max-width:600px;background:white;border-radius:27px 27px 0 0;padding:22px 19px calc(24px + env(safe-area-inset-bottom));max-height:93vh;overflow:auto;box-shadow:0 -15px 55px #11133235}.modal-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-title b{font-size:18px}.close{border:0;background:#f2f0f9;color:#675f8e;border-radius:12px;font-size:18px;width:35px;height:35px}.field{display:block;font-size:12px;font-weight:bold;color:#393958;margin:15px 0 6px}.control{width:100%;border:1px solid #e0e3f2;border-radius:13px;padding:14px 12px;color:#1c2a47;background:white;min-height:47px}.modal footer{display:flex;gap:9px;margin-top:21px}.modal footer button:first-child{flex:1}.modal footer button:last-child{flex:2}.toast{position:fixed;right:22px;left:22px;bottom:100px;margin:auto;max-width:540px;background:#28284f;color:white;border-radius:13px;padding:13px 16px;text-align:center;font-size:12px;z-index:50;box-shadow:0 8px 24px #13152f44;display:none}
+@media(min-width:700px){.top{border-radius:25px 25px 32px 32px;margin-top:20px}.bottom{border-radius:20px 20px 0 0}}@media(max-width:360px){.hero h1{font-size:21px}.orb{width:78px;height:78px}.task .actions{flex-direction:column}.action-card{align-items:start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="top">
+  <div class="brand"><div class="logo">✦</div><div><b>مساعدي</b><small>مساعدك الشخصي، يومك في إيدك</small></div><div class="badge">Android • Beta</div></div>
+  <div class="hero"><div><h1 id="greeting">أهلاً بيك 👋</h1><p>خلّي مواعيدك منظمة، وتذكيراتك توصلك<br>حتى لما تسيب التطبيق.</p></div><div class="orb"><i></i><s></s></div></div>
+</header>
+<main>
+  <section id="home" class="view active">
+    <div id="browserNotice" class="banner info hidden">أنت بتشوف معاينة ويب. الإشعارات الحقيقية هتشتغل في نسخة أندرويد المثبّتة.</div>
+    <div id="notifNotice" class="banner hidden"><span>🔔</span><span>فعّل الإشعارات عشان التذكيرات تظهر خارج التطبيق.</span><button onclick="requestNotifications()">تفعيل</button></div>
+    <div id="exactNotice" class="banner info hidden"><span>⏱️</span><span>اسمح بالمنبّهات الدقيقة عشان المواعيد توصل أقرب للوقت المحدد.</span><button onclick="requestExact()">السماح</button></div>
+    <div class="section-title"><b>نظرة على يومك</b><small id="todayDate"></small></div>
+    <div class="metrics"><div class="card metric"><span class="emoji">📋</span><b id="upcomingCount">0</b><small>تذكير قادم</small></div><div class="card metric"><span class="emoji">☀️</span><b id="todayCount">0</b><small>موعد النهارده</small></div></div>
+    <div class="action-card"><div><h3>عندك حاجة محتاج تفتكرها؟</h3><p>ضيف ميعاد جديد في ثواني، أو قول لمساعدي يفتكرك.</p></div><button class="btn" onclick="openForm()">+ تذكير جديد</button></div>
+    <div class="section-title"><b>أقرب المواعيد</b><small id="nextLabel"></small></div>
+    <div id="homeTasks"></div>
+    <div class="section-title"><b>جرّب تقول لمساعدي</b></div>
+    <div class="quick"><button onclick="trySample('فكرني بعد 10 دقايق أشرب مياه')">⏰ فكرني بعد 10 دقايق</button><button onclick="trySample('عندي إيه؟')">📅 عندي إيه؟</button><button onclick="openTab('assistant')">🎤 اتكلم مع مساعدي</button></div>
+  </section>
+  <section id="tasks" class="view">
+    <div class="section-title" style="margin-top:1px"><div><h2 class="heading">كل تذكيراتك</h2><p class="subheading">رتّب مواعيدك، وعدّلها وقت ما تحب.</p></div><button class="btn" onclick="openForm()">+ إضافة</button></div>
+    <div id="allTasks"></div>
+  </section>
+  <section id="assistant" class="view">
+    <h2 class="heading">اتكلم مع مساعدي ✨</h2><p class="subheading">اكتب أو قول طلبك باللهجة المصرية، وهساعدك في التذكيرات.</p>
+    <div class="chat" id="chat" aria-live="polite"></div>
+    <div class="composer"><input id="chatInput" placeholder="مثلاً: فكرني بكرة الساعة 8 الصبح..." aria-label="رسالتك" autocomplete="off"><button class="mic" onclick="startMic()" aria-label="تكلم" title="تكلم">🎤</button><button class="send" onclick="sendMessage()" aria-label="إرسال" title="إرسال">➤</button></div>
+    <div class="suggestions"><button onclick="trySample('عندي إيه؟')">عندي إيه؟</button><button onclick="trySample('فكرني بكرة الساعة 9 الصبح أتصل بماما')">فكرني بكرة 9 الصبح</button><button onclick="openForm()">أضيف موعد يدوي</button></div>
+    <div class="footnote">المحادثة الحالية مخصصة لفهم أوامر المواعيد والتذكيرات. مش مساعد ذكاء اصطناعي عام لسه.</div>
+  </section>
+  <section id="settings" class="view">
+    <h2 class="heading">الإعدادات ⚙️</h2><p class="subheading">خليك متحكم في الإشعارات والنسخ الاحتياطي.</p>
+    <div class="card status-card"><div class="status-line"><div><b>🔔 إشعارات أندرويد</b><small>توصلك عند الميعاد حتى والتطبيق مقفول</small></div><span id="notifTag" class="tag off">جارٍ الفحص</span></div><button class="btn secondary" onclick="requestNotifications()">إعدادات الإشعارات</button></div>
+    <div class="card status-card"><div class="status-line"><div><b>⏱️ المنبّهات الدقيقة</b><small>لو الصلاحية غير مفعّلة، وقت التنبيه ممكن يتأخر</small></div><span id="exactTag" class="tag off">جارٍ الفحص</span></div><button class="btn secondary" onclick="requestExact()">السماح بدقة المواعيد</button></div>
+    <div class="card status-card"><b style="font-size:13px">تفضيلات الرد</b><label class="toggle-row">اسمع رد مساعدي بصوت <input id="voiceToggle" type="checkbox" checked onchange="setVoice(this.checked)"></label><small style="color:var(--muted);line-height:2">صوت اللغة العربية بيعتمد على الأصوات الموجودة في جهازك. التعرف على الكلام ممكن يحتاج إنترنت حسب الخدمة المثبتة.</small></div>
+    <div class="card status-card"><b style="font-size:13px">حفظ مواعيدك</b><p>صدّر تذكيراتك لملف، واستوردها تاني على نفس الجهاز أو جهاز تاني. الاستيراد بيدمج المواعيد القادمة.</p><div class="settings-btns"><button class="btn secondary" onclick="exportBackup()">⬇️ تصدير نسخة</button><button class="btn light" onclick="importBackup()">⬆️ استيراد نسخة</button></div></div>
+    <p class="footnote">مساعدي 3.0 تجريبي — يعمل بدون حساب أو خادم للمواعيد المحلية. لا يوجد مزامنة سحابية أو استماع دائم لكلمة النداء في الخلفية في هذه النسخة.</p>
+  </section>
+</main>
+<nav class="bottom" aria-label="التنقل"><button id="nav-home" class="active" onclick="openTab('home')"><span>⌂</span>الرئيسية</button><button id="nav-tasks" onclick="openTab('tasks')"><span>▤</span>مواعيدي</button><button id="nav-assistant" onclick="openTab('assistant')"><span>✦</span>مساعدي</button><button id="nav-settings" onclick="openTab('settings')"><span>⚙</span>الإعدادات</button></nav>
+</div>
+<div id="formBack" class="modal-back" onclick="if(event.target===this)closeForm()"><form class="modal" onsubmit="saveForm(event)">
+<div class="modal-title"><b id="formHeading">تذكير جديد</b><button type="button" class="close" onclick="closeForm()">×</button></div>
+<label class="field" for="remTitle">هتفكّر نفسك بإيه؟</label><input class="control" id="remTitle" placeholder="مثلاً: مكالمة أحمد" maxlength="160" required>
+<label class="field" for="remWhen">التاريخ والوقت</label><input class="control" type="datetime-local" id="remWhen" required>
+<label class="field" for="remRepeat">يتكرر كل قد إيه؟</label><select class="control" id="remRepeat"><option value="none">مرة واحدة</option><option value="daily">كل يوم</option><option value="weekly">كل أسبوع</option></select>
+<footer><button type="button" class="btn light" onclick="closeForm()">إلغاء</button><button class="btn" type="submit">حفظ التذكير</button></footer>
+</form></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+'use strict';
+const NATIVE = !!window.AndroidBridge;
+const KEY = 'mosaedy_browser_preview_v3';
+const VOICE_KEY = 'mosaedy_voice_v3';
+const storage = {get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let records = [], editId = null, previewMemory = []; 
+let speakEnabled = storage.get(VOICE_KEY) !== 'off';
+const $ = id => document.getElementById(id);
+const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const readLocal = () => { try { let raw=storage.get(KEY);return raw?JSON.parse(raw):previewMemory; } catch { return previewMemory; } };
+const persistLocal = () => {previewMemory = records.slice();storage.set(KEY, JSON.stringify(records));};
+function fetchAll(){
+  try { records = NATIVE ? JSON.parse(AndroidBridge.getReminders()) : readLocal(); }
+  catch { records = []; }
+  records = records.filter(r=>r && r.id && r.title && Number.isFinite(Number(r.dueAt))).sort((a,b)=>a.dueAt-b.dueAt);
+}
+function formatWhen(ms){return new Date(Number(ms)).toLocaleString('ar-EG',{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});}
+function formatInput(ms){let d = new Date(ms); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;}
+function showToast(msg){let el=$('toast');el.textContent=msg;el.style.display='block';clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>el.style.display='none',3300);}
+function openTab(tab){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('active',e.id===tab));document.querySelectorAll('.bottom button').forEach(e=>e.classList.toggle('active',e.id==='nav-'+tab));window.scrollTo({top:0,behavior:'smooth'});if(tab==='tasks'||tab==='home')refresh();}
+function openForm(id){
+ editId = id || null;
+ let record = records.find(r=>r.id===editId);
+ $('formHeading').textContent=record?'تعديل التذكير':'تذكير جديد';
+ $('remTitle').value=record?record.title:'';
+ $('remWhen').value=record?formatInput(record.dueAt):formatInput(Date.now()+60*60*1000);
+ $('remRepeat').value=record?record.repeat:'none';
+ $('formBack').classList.add('open');
+ setTimeout(()=>$('remTitle').focus(),100);
+}
+function closeForm(){$('formBack').classList.remove('open');editId=null;}
+function saveItem(record){
+ if(NATIVE) { let result=JSON.parse(AndroidBridge.saveReminder(JSON.stringify(record)));return !!result.ok; }
+ records=records.filter(r=>r.id!==record.id);records.push(record);persistLocal();return true;
+}
+function saveForm(e){e.preventDefault();let title=$('remTitle').value.trim();let dueAt=new Date($('remWhen').value).getTime();let repeat=$('remRepeat').value;
+ if(!title || !Number.isFinite(dueAt) || dueAt <= Date.now()){showToast('حدد وقت صحيح في المستقبل');return;}
+ let id=editId||('rem-'+Date.now()+'-'+Math.floor(Math.random()*100000));
+ if(!saveItem({id,title,dueAt,repeat})){showToast('تعذر حفظ التذكير');return;}
+ closeForm();refresh();showToast('✅ التذكير اتسجل بنجاح');
+}
+function deleteItem(id){
+ if(!confirm('تحب تحذف التذكير ده؟'))return;
+ if(NATIVE)AndroidBridge.deleteReminder(id);
+ else {records=records.filter(r=>r.id!==id);persistLocal();}
+ refresh();showToast('تم حذف التذكير');
+}
+function rowHtml(r){return `<article class="task card"><div class="marker">⏰</div><div class="task-body"><strong>${escapeHtml(r.title)}</strong><div class="meta">${escapeHtml(formatWhen(r.dueAt))} ${r.repeat==='daily'?'• يومي':r.repeat==='weekly'?'• أسبوعي':''}</div></div><div class="actions"><button class="mini" aria-label="تعديل" data-task-action="edit" data-task-id="${escapeHtml(r.id)}">✎</button><button class="mini delete" aria-label="حذف" data-task-action="delete" data-task-id="${escapeHtml(r.id)}">✕</button></div></article>`;}
+function render(){
+ let now=Date.now(), upcoming=records.filter(r=>r.dueAt>now), today=new Date();
+ let dayKey=d=>new Date(d).toDateString();
+ $('todayDate').textContent=today.toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
+ let hr=today.getHours();$('greeting').textContent=(hr<12?'صباح الخير':hr<18?'مساء الخير':'مساء النور')+' 👋';
+ $('upcomingCount').textContent=upcoming.length.toLocaleString('ar-EG');
+ $('todayCount').textContent=upcoming.filter(r=>dayKey(r.dueAt)===dayKey(now)).length.toLocaleString('ar-EG');
+ $('nextLabel').textContent=upcoming.length?'اللي جاي':'مفيش مواعيد';
+ $('homeTasks').innerHTML=upcoming.length?upcoming.slice(0,3).map(rowHtml).join(''):'<div class="card empty"><i>🗓️</i>لسه مفيش تذكيرات. ضيف أول معاد ليك!</div>';
+ $('allTasks').innerHTML=upcoming.length?upcoming.map(rowHtml).join(''):'<div class="card empty"><i>📅</i>مفيش تذكيرات جاية حاليًا.</div>';
+}
+function updateCapabilities(){
+ $('browserNotice').classList.toggle('hidden',NATIVE);
+ if(!NATIVE){$('notifNotice').classList.add('hidden');$('exactNotice').classList.add('hidden');return;}
+ try{let caps=JSON.parse(AndroidBridge.capabilities());
+ $('notifNotice').classList.toggle('hidden',!!caps.notificationsAllowed);
+ $('exactNotice').classList.toggle('hidden',!!caps.exactAlarmsAllowed);
+ let n=$('notifTag'),x=$('exactTag');
+ n.textContent=caps.notificationsAllowed?'مفعّلة ✓':'غير مفعّلة';n.classList.toggle('off',!caps.notificationsAllowed);
+ x.textContent=caps.exactAlarmsAllowed?'مفعّلة ✓':'غير مفعّلة';x.classList.toggle('off',!caps.exactAlarmsAllowed);
+ }catch(e){console.warn(e);}
+}
+function refresh(){fetchAll();render();updateCapabilities();}
+window.nativeRefresh=refresh;
+function requestNotifications(){if(NATIVE)AndroidBridge.requestNotifications();else showToast('ده وضع معاينة ويب. صلاحيات أندرويد بتظهر في التطبيق المثبّت.');}
+function requestExact(){if(NATIVE)AndroidBridge.requestExactAlarms();else showToast('المنبّه الدقيق متاح في تطبيق أندرويد فقط');}
+function setVoice(enabled){speakEnabled=enabled;storage.set(VOICE_KEY,enabled?'on':'off');}
+function say(text){if(!speakEnabled)return;try{if(NATIVE)AndroidBridge.speak(text);else if('speechSynthesis'in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang='ar-EG';speechSynthesis.speak(u)}}catch(e){}}
+function addBubble(text,mine=false){let div=document.createElement('div');div.className='bubble'+(mine?' me':'');div.textContent=text;$('chat').appendChild(div);$('chat').scrollTop=$('chat').scrollHeight;if(!mine)say(text);}
+function westernDigits(s){return s.replace(/[٠-٩۰-۹]/g,ch=>{let a='٠١٢٣٤٥٦٧٨٩',b='۰۱۲۳۴۵۶۷۸۹';return String(a.includes(ch)?a.indexOf(ch):b.indexOf(ch));});}
+function parseCommand(input){
+ let text=westernDigits(input).replace(/\s+/g,' ').trim();
+ let now=new Date();let date=new Date(now), m, rel;
+ // Example: بعد 5 دقايق, بعد ساعتين, بعد يومين.
+ rel=text.match(/بعد\s+(\d+)\s*(دقيقة|دقيقه|دقايق|دقائق|ساعة|ساعه|ساعات|ساعة|يوم|ايام|أيام)/);
+ if(rel){let unit=rel[2],factor=/دق/.test(unit)?60000:/ساع/.test(unit)?3600000:86400000;date=new Date(Date.now()+Number(rel[1])*factor);}
+ else if(/بعد\s+ساعتين/.test(text)){date=new Date(Date.now()+7200000);rel=['بعد ساعتين'];}
+ else if(/بعد\s+يومين/.test(text)){date=new Date(Date.now()+172800000);rel=['بعد يومين'];}
+ else if(/بعد\s+نص\s+ساعة/.test(text)){date=new Date(Date.now()+1800000);rel=['بعد نص ساعة'];}
+ else{
+  let dayFound=false;
+  if(/بعد\s+بك(?:رة|ره)/.test(text)){date.setDate(date.getDate()+2);dayFound=true;}
+  else if(/بك(?:رة|ره)|غد[ًاأ]?/.test(text)){date.setDate(date.getDate()+1);dayFound=true;}
+  else if(/النهارده|اليوم/.test(text)){dayFound=true;}
+  else{const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];let found=days.findIndex(d=>text.includes(d));if(found!==-1){let delta=(found-date.getDay()+7)%7||7;date.setDate(date.getDate()+delta);dayFound=true;}}
+  if(!dayFound)return null;
+  m=text.match(/(?:الساعة|الساعه|ساعه|ساعه)\s*(\d{1,2})(?:[:٫.]\s*(\d{1,2}))?/);
+  if(!m) return null;
+  let hour=Number(m[1]),minute=Number(m[2]||0);
+  if(hour>23||minute>59)return null;
+  if(hour===12 && /بالليل|منتصف الليل/.test(text)){date.setDate(date.getDate()+1);hour=0;}
+  else if(/بالليل|مساء|المسا|العصر|بالظهر/.test(text)&&hour<12)hour+=12;
+  if(/الصبح|صباح/.test(text)&&hour===12)hour=0;
+  if(hour===24)return null;
+  date.setHours(hour,minute,0,0);
+ }
+ if(date.getTime()<=Date.now()+2000)return null;
+ let title=text
+   .replace(/^(فكرني|ذكرني|نبهني|نبّهني|سجّل|سجل|اعملي|اعمللي|اعمل|ضيف|أضف|حطلي|محتاج|عايز)\s*(لي|تذكير|موعد|اني|إنّي|ان|إني)?\s*/i,'')
+   .replace(/بعد\s+(?:\d+\s*(?:دقيقة|دقيقه|دقايق|دقائق|ساعة|ساعه|ساعات|يوم|ايام|أيام)|ساعتين|يومين|نص\s+ساعة)/g,'')
+   .replace(/بعد\s+بك(?:رة|ره)|بك(?:رة|ره)|غد[ًاأ]?|النهارده|اليوم|الأحد|الاثنين|الثلاثاء|الأربعاء|الخميس|الجمعة|السبت/g,'')
+   .replace(/(?:الساعة|الساعه|ساعه)\s*\d{1,2}(?:[:٫.]\s*\d{1,2})?/g,'')
+   .replace(/بالليل|مساء|المسا|العصر|بالظهر|الصبح|صباح/g,'')
+   .replace(/^[\s،,:-]+|[\s،,:-]+$/g,'').replace(/\s+/g,' ');
+ title=title.replace(/^(إني|اني|إنّي|ان)\s+/,'');
+ if(!title||title.length<2)return null;
+ return {id:'voice-'+Date.now()+'-'+Math.floor(Math.random()*100000), title, dueAt:date.getTime(),repeat:'none'};
+}
+function handleMessage(message){let t=message.trim();if(!t)return;addBubble(t,true);
+ if(/عندي\s*(ايه|إيه)|مواعيدي|تذكيراتي|جدولي/.test(t)){
+  refresh();let next=records.filter(r=>r.dueAt>Date.now()).slice(0,5);
+  return addBubble(next.length?'أقرب مواعيدك:\n'+next.map(r=>'• '+r.title+' — '+formatWhen(r.dueAt)).join('\n'):'لسه مفيش مواعيد جاية. تحب تسجّل تذكير جديد؟');
+ }
+ if(/فكرني|ذكرني|نبهني|نبّهني|سجل|موعد|تذكير|ضيف|أضف|حطلي/.test(t)){
+  let r=parseCommand(t);
+  if(!r) return addBubble('محتاج منك تاريخ ووقت واضحين واسم المهمة. مثال: «فكرني بكرة الساعة 8 الصبح أكلم أحمد».');
+  if(saveItem(r)){refresh();addBubble('تمام ✅ هفكرك بـ «'+r.title+'» يوم '+formatWhen(r.dueAt)+'.');}
+  else addBubble('حصلت مشكلة أثناء حفظ التذكير، جرّب تاني.');
+  return;
+ }
+ addBubble('أنا حاليًا متخصص في المواعيد والتذكيرات. تقدر تقول: «فكرني بعد 10 دقايق أشرب مياه» أو «عندي إيه؟».');
+}
+function sendMessage(){let input=$('chatInput');let s=input.value;input.value='';handleMessage(s);}
+function trySample(text){openTab('assistant');handleMessage(text);}
+function startMic(){if(NATIVE){AndroidBridge.startVoiceInput();return;}
+ let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR)return showToast('التعرف على الصوت مش مدعوم هنا؛ هيتاح حسب خدمات أندرويد المثبتة');
+ let r=new SR();r.lang='ar-EG';r.onresult=e=>window.onSpeechResult(e.results[0][0].transcript);r.onerror=()=>showToast('تعذّر فتح التعرف على الصوت');r.start();}
+window.onSpeechResult=t=>{openTab('assistant');handleMessage(t)};
+window.onVoiceError=t=>showToast(t);
+function exportBackup(){if(NATIVE)AndroidBridge.exportBackup();else{let file=new Blob([JSON.stringify({format:'mosaedy-native-backup',version:1,reminders:records},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(file);a.download='mosaedy-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);}}
+function importBackup(){if(NATIVE)AndroidBridge.importBackup();else showToast('استيراد الملف متاح داخل نسخة أندرويد');}
+document.addEventListener('click', e=>{const b=e.target.closest('button[data-task-action]');if(!b)return;let id=b.getAttribute('data-task-id');if(b.dataset.taskAction==='edit')openForm(id);else deleteItem(id);});
+$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMessage()}});
+$('voiceToggle').checked=speakEnabled;
+addBubble('أهلاً! أنا مساعدي ✨\nقولّي تحب أفكرك بإيه وإمتى؟');
+refresh();setInterval(()=>{if(!document.hidden)refresh()},60000);
+</script>
+</body></html>

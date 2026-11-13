@@ -1,0 +1,21 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.mosaedy.assistant'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.mosaedy.assistant'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '3.0.0-beta'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

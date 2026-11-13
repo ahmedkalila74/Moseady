@@ -1,0 +1,18 @@
+مساعدي 3.0 — ملفات مرتّبة للرفع دفعة واحدة (كلها في نفس المستوى)
+
+مهم: ما فيش أي فولدرات جوه الحزمة دي. كل أسماء ملفات Android تبدأ بـ M3__.
+رفعهم كلهم في جذر مستودع Moseady مرة واحدة، وسيعيد GitHub Actions ترتيبهم في مجلداتهم وقت البناء.
+
+الخطوة 1: فك ضغط Mosaedy_UPLOAD_ONCE_FLAT.zip على تليفونك.
+الخطوة 2: افتح مشروع Moseady على github.com واختر Code > Add file > Upload files.
+الخطوة 3: من ملفات الموبايل افتح مجلد Mosaedy_UPLOAD_ONCE_FLAT، ثم حدد كل الملفات مرة واحدة وارفعها (Commit changes).
+لو زر Add file مش ظاهر، شغّل "Desktop site" في Chrome.
+الخطوة 4 (مرة واحدة بس): من GitHub افتح Actions > New workflow > set up a workflow yourself.
+غيّر الاسم إلى android.yml، وامسح النص الافتراضي، والصق محتويات الملف BUILD_MOSAEDY.yml، ثم Commit changes.
+تنبيه: ملف BUILD_MOSAEDY.yml المرفوع في الجذر هو نسخة للنقل، وليس ملف Workflow نشط حتى توضع نسخته داخل .github/workflows/android.yml.
+الخطوة 5: Actions > Build Mosaedy Android APK > Run workflow > Run workflow.
+الخطوة 6: افتح آخر تشغيل ناجح، وانزل إلى Artifacts وحمّل Mosaedy-Android-APK.
+الخطوة 7: فك الملف الناتج لتحصل على app-debug.apk، وثبته على جهاز أندرويد للتجربة.
+
+لا تمسح الملفات القديمة الآن. البنية الجديدة تحمل البادئة M3__ وتُبنى بمعزل عن الملفات القديمة الموجودة في المستودع. نقدر ننضفها بعد نجاح البناء.
+ملاحظة: التطبيق APK لم يُبن أو يُختبر على الهاتف في هذه البيئة، وقد يتطلب تعديلًا إذا ظهر فشل بناء في Actions.

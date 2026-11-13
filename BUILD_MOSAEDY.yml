@@ -1,0 +1,72 @@
+name: Build Mosaedy Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'M3__*'
+      - 'M3_MANIFEST.json'
+      - '.github/workflows/android.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle 8.7
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 35 SDK
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+
+      - name: Reconstruct project from flat files
+        shell: bash
+        run: |
+          python3 - <<'PY_RESTORE'
+          import pathlib, json, hashlib
+          root = pathlib.Path.cwd()
+          out = (root / '_build_project').resolve()
+          manifest = json.loads((root / 'M3_MANIFEST.json').read_text(encoding='utf-8'))
+          for entry in manifest['entries']:
+              src = root / entry['upload_name']
+              if not src.is_file():
+                  raise FileNotFoundError(f'Missing uploaded file: {src.name}')
+              actual = hashlib.sha256(src.read_bytes()).hexdigest()
+              if actual != entry['sha256']:
+                  raise RuntimeError(f'Corrupted file: {src.name}')
+              dst = (out / entry['original_path']).resolve()
+              if not dst.is_relative_to(out):
+                  raise ValueError(f'Invalid destination: {dst}')
+              dst.parent.mkdir(parents=True, exist_ok=True)
+              dst.write_bytes(src.read_bytes())
+          print(f"Restored {len(manifest['entries'])} Android source files")
+          PY_RESTORE
+
+      - name: Build debug APK
+        run: gradle --no-daemon -p _build_project :app:assembleDebug
+
+      - name: Upload downloadable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mosaedy-Android-APK
+          path: _build_project/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

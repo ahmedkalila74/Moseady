@@ -1,0 +1,102 @@
+{
+  "application": "Mosaedy",
+  "project_version": "3.0-beta",
+  "description": "Flat root upload; built by a GitHub Actions workflow that restores Android folder structure",
+  "entries": [
+    {
+      "upload_name": "M3__.gitignore",
+      "original_path": ".gitignore",
+      "sha256": "7eccaf21df0f47e5583b66dceb1c5228c774563aaa948dab3d7ab39cb2b95d3f"
+    },
+    {
+      "upload_name": "M3__README_AR.md",
+      "original_path": "README_AR.md",
+      "sha256": "ef38b6fc536da62f21ed05078e11f8aa9ee006ff5c63676665be8fc3470da66e"
+    },
+    {
+      "upload_name": "M3__TEST_PLAN_AR.md",
+      "original_path": "TEST_PLAN_AR.md",
+      "sha256": "04d6951f51bf83fafae80e60859db499573e9e8688dee63a3b1cc7c903d2dd75"
+    },
+    {
+      "upload_name": "M3__app__build.gradle",
+      "original_path": "app/build.gradle",
+      "sha256": "66d20a090fd2a77a4ab202d1e40458092a2c22d19af6f4cba4f0564a158440e8"
+    },
+    {
+      "upload_name": "M3__app__src__main__AndroidManifest.xml",
+      "original_path": "app/src/main/AndroidManifest.xml",
+      "sha256": "182d9365a66ebe300ee46c1ee60d4a9a5dc70931761e9bf4d58a8ca94a79b2b9"
+    },
+    {
+      "upload_name": "M3__app__src__main__assets__index.html",
+      "original_path": "app/src/main/assets/index.html",
+      "sha256": "d17f6324ff0b5f711599ccab936124cb011c041d4052765292350d009f5a8081"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__BootReceiver.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/BootReceiver.java",
+      "sha256": "8bcd215f734cae6740aa7b4f3c95b2d5fee116edb1c3df7866050d61e5957c85"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__MainActivity.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/MainActivity.java",
+      "sha256": "75dba9f1e0d873b9f4528a2c54568de843564f50eaf8419cec482cc38a32b533"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__NotificationActionReceiver.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/NotificationActionReceiver.java",
+      "sha256": "0b97d928411f464af8d57afb8cf3bc36265594efff72fd3179a1303bfdab9d75"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderNotifier.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderNotifier.java",
+      "sha256": "1398fc63f94043b0cc17a22f5a90498d83e7136e3c3a8ddf2109e3c871529f80"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderReceiver.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderReceiver.java",
+      "sha256": "8e33c24879b0ffe0c7da1331577f633cd9e9de42f175bc6a34acca685aba033f"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderScheduler.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderScheduler.java",
+      "sha256": "2189a509d5bc6174e78d95ff61a61c7e03398f77d60261b1ae0198ccbab788d8"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderStore.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderStore.java",
+      "sha256": "9ec87018d9dc2496b94ce532803c1035752209e3923c8e69b3da014d678607e9"
+    },
+    {
+      "upload_name": "M3__app__src__main__res__drawable__ic_launcher.xml",
+      "original_path": "app/src/main/res/drawable/ic_launcher.xml",
+      "sha256": "e29eaeb981cb5361b9fb6a621109815146abe94d43bf5355311e1fcbe223c891"
+    },
+    {
+      "upload_name": "M3__app__src__main__res__values__strings.xml",
+      "original_path": "app/src/main/res/values/strings.xml",
+      "sha256": "2d4e6e14695b7c25c7418a1df26dac280d3f570294f06c632fa77b2992db3c7c"
+    },
+    {
+      "upload_name": "M3__app__src__main__res__xml__data_extraction_rules.xml",
+      "original_path": "app/src/main/res/xml/data_extraction_rules.xml",
+      "sha256": "d9064a7ac7e7df1d200997e35e4be275bd54f9f7c074d497dbb31405b573a82d"
+    },
+    {
+      "upload_name": "M3__build.gradle",
+      "original_path": "build.gradle",
+      "sha256": "36d655a9067d39892bba80896925f12e70f6b0d7481fe914ec6a61bbbde967cb"
+    },
+    {
+      "upload_name": "M3__gradle.properties",
+      "original_path": "gradle.properties",
+      "sha256": "4d4c82226865844bdc85391d907a383da4a35d3a3f5348985d5ec3997ab932fe"
+    },
+    {
+      "upload_name": "M3__settings.gradle",
+      "original_path": "settings.gradle",
+      "sha256": "fb890e15e7e533634a1bfe1f928424cbfb53eb14ea472d0805a25be21701d62c"
+    }
+  ]
+}
