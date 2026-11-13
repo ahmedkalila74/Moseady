@@ -203,7 +203,7 @@ public class MainActivity extends Activity {
         if (requestCode == REQ_SPEECH) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (results != null && !results.isEmpty()) {
-                callJs("window.onSpeechResult && window.onSpeechResult(" + JSONObject.quote(results.get(0)) + ")");
+                callJs("window.onSpeechCandidates && window.onSpeechCandidates(" + new JSONArray(results).toString() + ")");
             }
         } else if (requestCode == REQ_SAVE) {
             try (OutputStream stream = getContentResolver().openOutputStream(data.getData())) {
@@ -239,6 +239,7 @@ public class MainActivity extends Activity {
                         candidate.put("id", r.optString("id", "imported-" + i));
                         candidate.put("title", r.optString("title"));
                         candidate.put("repeat", r.optString("repeat", "none"));
+                        candidate.put("mode", r.optString("mode", "notification"));
                         long due;
                         if (nativeBackup) due = r.optLong("dueAt");
                         else due = java.time.Instant.parse(r.optString("when")).toEpochMilli();

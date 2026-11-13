@@ -32,9 +32,11 @@ public final class ReminderStore {
         String title = reminder.optString("title", "").trim();
         long due = reminder.optLong("dueAt", 0);
         String repeat = reminder.optString("repeat", "none");
+        String mode = reminder.optString("mode", "notification");
         if (id.isEmpty() || id.length() > 100 || title.isEmpty() || title.length() > 160 ||
             due <= System.currentTimeMillis() ||
-            !(repeat.equals("none") || repeat.equals("daily") || repeat.equals("weekly"))) {
+            !(repeat.equals("none") || repeat.equals("daily") || repeat.equals("weekly")) ||
+            !(mode.equals("notification") || mode.equals("alarm"))) {
             throw new JSONException("Invalid reminder");
         }
         JSONObject clean = new JSONObject();
@@ -42,6 +44,7 @@ public final class ReminderStore {
         clean.put("title", title);
         clean.put("dueAt", due);
         clean.put("repeat", repeat);
+        clean.put("mode", mode);
         JSONArray current = all(context), next = new JSONArray();
         for (int i = 0; i < current.length(); i++) {
             JSONObject r = current.optJSONObject(i);

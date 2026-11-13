@@ -10,14 +10,14 @@ public class ReminderReceiver extends BroadcastReceiver {
         String id = intent.getStringExtra("id");
         if (id == null || id.isEmpty()) return;
         if (intent.getBooleanExtra("snoozed", false)) {
-            ReminderNotifier.show(context, id, intent.getStringExtra("title"));
+            ReminderNotifier.show(context, id, intent.getStringExtra("title"), intent.getStringExtra("mode"));
             return;
         }
         JSONObject record = ReminderStore.find(context, id);
         if (record == null) return; // deleted before scheduled firing
         long due = record.optLong("dueAt");
         if (due > System.currentTimeMillis() + 1500) return; // stale alarm
-        ReminderNotifier.show(context, id, record.optString("title"));
+        ReminderNotifier.show(context, id, record.optString("title"), record.optString("mode", "notification"));
         String repeat = record.optString("repeat", "none");
         if (repeat.equals("daily") || repeat.equals("weekly")) {
             long next = ReminderScheduler.nextOccurrence(due, repeat, System.currentTimeMillis());

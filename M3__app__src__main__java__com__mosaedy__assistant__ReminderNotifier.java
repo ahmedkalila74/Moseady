@@ -30,7 +30,12 @@ public final class ReminderNotifier {
         return nm.areNotificationsEnabled();
     }
 
-    public static void show(Context context, String id, String title) {
+    public static void show(Context context, String id, String title, String mode) {
+        if ("alarm".equals(mode)) AlarmRingingService.start(context, id, title);
+        else showRegular(context, id, title);
+    }
+
+    public static void showRegular(Context context, String id, String title) {
         if (!allowed(context)) return;
         ensureChannel(context);
         Intent open = new Intent(context, MainActivity.class);

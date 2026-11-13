@@ -1,7 +1,7 @@
 {
   "application": "Mosaedy",
-  "project_version": "3.0-beta",
-  "description": "Flat root upload; built by a GitHub Actions workflow that restores Android folder structure",
+  "project_version": "3.1-beta",
+  "description": "All-flat root upload for existing GitHub Actions workflow; restores Android paths and verifies SHA256.",
   "entries": [
     {
       "upload_name": "M3__.gitignore",
@@ -11,27 +11,42 @@
     {
       "upload_name": "M3__README_AR.md",
       "original_path": "README_AR.md",
-      "sha256": "ef38b6fc536da62f21ed05078e11f8aa9ee006ff5c63676665be8fc3470da66e"
+      "sha256": "bb8158a45744b74bef72cede84097b6e481c427fbb0a93801a26de11a78c1541"
     },
     {
       "upload_name": "M3__TEST_PLAN_AR.md",
       "original_path": "TEST_PLAN_AR.md",
-      "sha256": "04d6951f51bf83fafae80e60859db499573e9e8688dee63a3b1cc7c903d2dd75"
+      "sha256": "bac5e54354340768f8b7a89b3b494c254ae3365c8d22c7d4e00027f93f209028"
     },
     {
       "upload_name": "M3__app__build.gradle",
       "original_path": "app/build.gradle",
-      "sha256": "66d20a090fd2a77a4ab202d1e40458092a2c22d19af6f4cba4f0564a158440e8"
+      "sha256": "acfedc1e1ed90ac9041c9c53dfabe77905a808959567ff075e8772c1b53db5eb"
     },
     {
       "upload_name": "M3__app__src__main__AndroidManifest.xml",
       "original_path": "app/src/main/AndroidManifest.xml",
-      "sha256": "182d9365a66ebe300ee46c1ee60d4a9a5dc70931761e9bf4d58a8ca94a79b2b9"
+      "sha256": "a7f0d9022a013719d3141d14e43df12505a1a317fe583ae61a5a9d6302192232"
     },
     {
       "upload_name": "M3__app__src__main__assets__index.html",
       "original_path": "app/src/main/assets/index.html",
-      "sha256": "d17f6324ff0b5f711599ccab936124cb011c041d4052765292350d009f5a8081"
+      "sha256": "47d2de651c515ed28994bb4d1464056c4170d47b5125e08015d12d15496a32d4"
+    },
+    {
+      "upload_name": "M3__app__src__main__assets__mosaedy_parser.js",
+      "original_path": "app/src/main/assets/mosaedy_parser.js",
+      "sha256": "6551a7fb5f8025b65e73843e310559257215511348c6d088eb238d5310022883"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__AlarmActivity.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/AlarmActivity.java",
+      "sha256": "45fa436ab35d76b1269ca6752a47847ee237157db403f07edf6cd53527ef0ee4"
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__AlarmRingingService.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/AlarmRingingService.java",
+      "sha256": "4b1e9727b7ee3089a268ae416c2d8737973056cdf8671f6d0eafe2eac64ac718"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__BootReceiver.java",
@@ -41,32 +56,32 @@
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__MainActivity.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/MainActivity.java",
-      "sha256": "75dba9f1e0d873b9f4528a2c54568de843564f50eaf8419cec482cc38a32b533"
+      "sha256": "9309ea3a570c906b774b1c5c240631d08815db5b89037beb361a8480b7afe2f8"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__NotificationActionReceiver.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/NotificationActionReceiver.java",
-      "sha256": "0b97d928411f464af8d57afb8cf3bc36265594efff72fd3179a1303bfdab9d75"
+      "sha256": "a9e91c9bcbd4159506807f34f72a01ae98f9e7bc66a0f903bd11c679d39a5996"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderNotifier.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderNotifier.java",
-      "sha256": "1398fc63f94043b0cc17a22f5a90498d83e7136e3c3a8ddf2109e3c871529f80"
+      "sha256": "34dbb72fdcf7da20028e6099466bdfb77f7a809baa54e56596b91a71c5f653a6"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderReceiver.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderReceiver.java",
-      "sha256": "8e33c24879b0ffe0c7da1331577f633cd9e9de42f175bc6a34acca685aba033f"
+      "sha256": "0590cc2e30705f5d38ad0dd27d11c101f66696cc8139b7de3dcfbf92f60c95c2"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderScheduler.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderScheduler.java",
-      "sha256": "2189a509d5bc6174e78d95ff61a61c7e03398f77d60261b1ae0198ccbab788d8"
+      "sha256": "30e94ff37976ffab34661aada9ab7299ed33afddac024c533cbe40a7a5687568"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderStore.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderStore.java",
-      "sha256": "9ec87018d9dc2496b94ce532803c1035752209e3923c8e69b3da014d678607e9"
+      "sha256": "f023dd735af0e16f44801bd444a71b11d0f313f4d3de077927976c8da05521e4"
     },
     {
       "upload_name": "M3__app__src__main__res__drawable__ic_launcher.xml",

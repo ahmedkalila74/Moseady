@@ -14,13 +14,14 @@ public final class ReminderScheduler {
     private ReminderScheduler() { }
     private static final String PREFIX = "mosaedy://reminder/";
 
-    private static PendingIntent pending(Context context, String id, String title, boolean snoozed) {
+    private static PendingIntent pending(Context context, String id, String title, boolean snoozed, String mode) {
         Intent intent = new Intent(context, ReminderReceiver.class);
         intent.setAction(snoozed ? "com.mosaedy.SNOOZED_REMINDER" : "com.mosaedy.REMINDER");
         intent.setData(Uri.parse(PREFIX + Uri.encode(id) + (snoozed ? "/snooze" : "")));
         intent.putExtra("id", id);
         intent.putExtra("title", title);
         intent.putExtra("snoozed", snoozed);
+        intent.putExtra("mode", mode);
         return PendingIntent.getBroadcast(context, 0, intent,
             PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -34,19 +35,25 @@ public final class ReminderScheduler {
         String id = reminder.optString("id");
         long due = reminder.optLong("dueAt");
         if (id.isEmpty() || due <= System.currentTimeMillis()) return;
-        scheduleAlarm(context, due, pending(context, id, reminder.optString("title"), false));
+        scheduleAlarm(context, due, pending(context, id, reminder.optString("title"), false, reminder.optString("mode","notification")), "alarm".equals(reminder.optString("mode","notification")), id);
     }
 
-    public static void snooze(Context context, String id, String title) {
+    public static void snooze(Context context, String id, String title, String mode) {
         long due = System.currentTimeMillis() + 10L * 60L * 1000L;
-        scheduleAlarm(context, due, pending(context, id, title, true));
+        scheduleAlarm(context, due, pending(context, id, title, true, mode), "alarm".equals(mode), id);
     }
 
-    private static void scheduleAlarm(Context context, long due, PendingIntent pendingIntent) {
+    private static void scheduleAlarm(Context context, long due, PendingIntent pendingIntent, boolean alarmMode, String id) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         try {
             if (exactAllowed(context)) {
-                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, pendingIntent);
+                if (alarmMode) {
+                    Intent show=new Intent(context,MainActivity.class);
+                    show.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    PendingIntent showIntent=PendingIntent.getActivity(context, id.hashCode(), show,
+                        PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
+                    am.setAlarmClock(new AlarmManager.AlarmClockInfo(due,showIntent),pendingIntent);
+                } else am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, pendingIntent);
                 return;
             }
         } catch (SecurityException ignored) { }
@@ -56,8 +63,8 @@ public final class ReminderScheduler {
 
     public static void cancel(Context context, String id) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.cancel(pending(context, id, "", false));
-        am.cancel(pending(context, id, "", true));
+        am.cancel(pending(context, id, "", false, "notification"));
+        am.cancel(pending(context, id, "", true, "notification"));
     }
 
     /** Add calendar days instead of 24-hour milliseconds, retaining local clock time across DST. */
@@ -80,7 +87,7 @@ public final class ReminderScheduler {
             if (due <= now) {
                 if ("none".equals(repeat)) {
                     // One-time reminders that became overdue while powered off are surfaced once.
-                    ReminderNotifier.show(context, r.optString("id"), r.optString("title"));
+                    ReminderNotifier.showRegular(context, r.optString("id"), r.optString("title"));
                     ReminderStore.remove(context, r.optString("id"));
                     continue;
                 }

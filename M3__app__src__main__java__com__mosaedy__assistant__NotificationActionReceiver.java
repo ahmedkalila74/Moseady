@@ -11,7 +11,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         String id = intent.getStringExtra("id");
         if (id == null || id.isEmpty()) return;
         String title = intent.getStringExtra("title");
-        ReminderScheduler.snooze(context, id, title == null ? "تذكير" : title);
+        ReminderScheduler.snooze(context, id, title == null ? "تذكير" : title, "notification");
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel(id.hashCode());
     }
