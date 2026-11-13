@@ -1,6 +1,6 @@
 {
   "app": "Mosaedy",
-  "version": "3.3.0-beta",
+  "version": "3.3.1",
   "schema_version": 1,
   "entries": [
     {
@@ -11,17 +11,17 @@
     {
       "upload_name": "M3__README_AR.md",
       "original_path": "README_AR.md",
-      "sha256": "efc0fefd76ee5f09dea09c8de63e9e4fba882caedc20eda87a0d2d74b2d5d5a1"
+      "sha256": "d8c73325c05f3c872639b81eef89874b72f45b3ac635f1ccc1154ef88831535d"
     },
     {
       "upload_name": "M3__TEST_PLAN_AR.md",
       "original_path": "TEST_PLAN_AR.md",
-      "sha256": "d385b212aee165aef87146600d4a789705b7292fbaf13036fa02e84fb74d7558"
+      "sha256": "08e2f75cd1a2b5e3fbc5bd041a95cbe88b6d9be1f1a9ba721728d61396644589"
     },
     {
       "upload_name": "M3__app__build.gradle",
       "original_path": "app/build.gradle",
-      "sha256": "fc1319886a694e72244adde5d9f4678a4c99b6b59440e6a1376e17fb05b2d537"
+      "sha256": "73fe1ea0ccecb60c3d3965591735c58ce62cc9eff9b14c9f859b97a9ee765d4a"
     },
     {
       "upload_name": "M3__app__src__main__AndroidManifest.xml",
@@ -31,17 +31,17 @@
     {
       "upload_name": "M3__app__src__main__assets__index.html",
       "original_path": "app/src/main/assets/index.html",
-      "sha256": "29c2c54f875a85d036d6c33663d1b0432121a45a3d80261a8265a60077da4213"
+      "sha256": "6dc47ed22a70453316efc56ed5a3dae55956236bf1cbebea8c33990e9c75b189"
     },
     {
       "upload_name": "M3__app__src__main__assets__mosaedy_commands.js",
       "original_path": "app/src/main/assets/mosaedy_commands.js",
-      "sha256": "4cbde4b22ed521b4464f2869d8aa91b498e2332fcd46d04aa9e56e9e383f9d8b"
+      "sha256": "b7a08260503496f6fa759be83aa4844c60636a100ac2dd82d543685ff84560a4"
     },
     {
       "upload_name": "M3__app__src__main__assets__mosaedy_parser.js",
       "original_path": "app/src/main/assets/mosaedy_parser.js",
-      "sha256": "8c5658e6d35ba0b34066ab5cbdcd03a1e2c03a417e5582946caa624d3d3c901b"
+      "sha256": "efc06a51f7422c5791ac2786dccd25989ecbb9cf9e6ab87e46e7d830ea250bc4"
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__AlarmActivity.java",
@@ -91,7 +91,7 @@
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__WakeWordService.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/WakeWordService.java",
-      "sha256": "ecfc2b1e13edc29d75681e4987cd712f8f6b1a02c6c8a91b78023be91476aa7c"
+      "sha256": "add98a6d5c38d96bbe7659018ee3489d3e15461492e1101d6551010bc3959ad5"
     },
     {
       "upload_name": "M3__app__src__main__res__drawable__ic_launcher.xml",

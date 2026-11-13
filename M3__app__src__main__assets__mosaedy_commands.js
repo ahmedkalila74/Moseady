@@ -1,4 +1,4 @@
-/* Mosaedy 3.2 local conversation context & edit commands. No cloud AI. */
+/* Mosaedy 3.3.1 local conversation context & edit commands. No cloud AI. */
 (function(root){'use strict';
 const normalize=s=>String(s||'').replace(/[\u064B-\u065F\u0670ـ]/g,'').replace(/[٠-٩]/g,c=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(c))).replace(/\s+/g,' ').trim();
 function classify(raw){let t=normalize(raw);

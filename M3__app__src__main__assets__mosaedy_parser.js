@@ -1,4 +1,4 @@
-/* Mosaedy 3.2 local Egyptian Arabic reminder parser. No AI or network calls. */
+/* Mosaedy 3.3.1 local Egyptian Arabic reminder parser. No AI or network calls. */
 (function (root) {
   'use strict';
   const AR = '٠١٢٣٤٥٦٧٨٩', FA = '۰۱۲۳۴۵۶۷۸۹';
