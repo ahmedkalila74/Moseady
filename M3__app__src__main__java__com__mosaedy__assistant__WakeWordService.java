@@ -121,7 +121,7 @@ public class WakeWordService extends Service implements RecognitionListener {
         Intent i=new Intent(this,MainActivity.class);i.putExtra("open_assistant",true);i.putExtra("wake_command",command);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pi=PendingIntent.getActivity(this,9301,i,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
-        Notification note=new Notification.Builder(this,ch)
+        Notification note=new Notification.Builder(this,ch.getId())
             .setSmallIcon(android.R.drawable.ic_btn_speak_now).setContentTitle(en ? "I heard you — open Mosaedy" : "سمعتك! افتح مساعدي")
             .setContentText(command.isEmpty()?(en ? "Tap to speak or create a reminder" : "اضغط عشان تتكلم أو تسجل تذكير"):(en ? "Tap to review your request" : "اضغط لمراجعة طلبك"))
             .setAutoCancel(true).setContentIntent(pi).build();
