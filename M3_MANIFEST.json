@@ -1,0 +1,194 @@
+{
+  "app": "Mosaedy",
+  "version": "3.5.0",
+  "versionCode": 7,
+  "package": "com.mosaedy.assistant",
+  "entries": [
+    {
+      "upload_name": "M3__.gitignore",
+      "original_path": ".gitignore",
+      "sha256": "3d459d6190d77b4c8c2e4dcaa650556bc0259953eef3abb1dc3a669302888f49",
+      "size_bytes": 59
+    },
+    {
+      "upload_name": "M3__LOCAL_TEST_RESULTS_AR.md",
+      "original_path": "LOCAL_TEST_RESULTS_AR.md",
+      "sha256": "fc2878b8b25c45359b96bf82bdcf917ac718c12e674766e63ce30abfad365fee",
+      "size_bytes": 1678
+    },
+    {
+      "upload_name": "M3__README_AR.md",
+      "original_path": "README_AR.md",
+      "sha256": "d4d070686391a52e5611cb7e7a14aa94dcd3d8c4a0a90433af3ab753c49549d1",
+      "size_bytes": 6517
+    },
+    {
+      "upload_name": "M3__RELEASE_NOTES_AR.md",
+      "original_path": "RELEASE_NOTES_AR.md",
+      "sha256": "49b152b04e6dac2529fe0506b5187adcfa7aeb67ae037f1a819fa4abaca89c9e",
+      "size_bytes": 3289
+    },
+    {
+      "upload_name": "M3__TEST_PLAN_AR.md",
+      "original_path": "TEST_PLAN_AR.md",
+      "sha256": "e20ddf3b6e9654e6a86aa060b2d4e70cc9563ab84a37ffe0904038f477278849",
+      "size_bytes": 4530
+    },
+    {
+      "upload_name": "M3__app__build.gradle",
+      "original_path": "app/build.gradle",
+      "sha256": "e5d94ff1ca4bf5a7418c23b9ed2d482699e4c351c76a06b69b286e247d4320f9",
+      "size_bytes": 406
+    },
+    {
+      "upload_name": "M3__app__src__main__AndroidManifest.xml",
+      "original_path": "app/src/main/AndroidManifest.xml",
+      "sha256": "bb11bffabb49c469a466aab5b849965f8f8ccac2b3546e80716f234f3e56584f",
+      "size_bytes": 3077
+    },
+    {
+      "upload_name": "M3__app__src__main__assets__index.html",
+      "original_path": "app/src/main/assets/index.html",
+      "sha256": "7fb0faae39def00aec0319e511b273d47dcb53c12575869db350c435591b586b",
+      "size_bytes": 102963
+    },
+    {
+      "upload_name": "M3__app__src__main__assets__mosaedy_commands.js",
+      "original_path": "app/src/main/assets/mosaedy_commands.js",
+      "sha256": "53923643bc9102c217acafbbdfaaea2e0f58cf008a883f01a0c7387497bba21b",
+      "size_bytes": 5804
+    },
+    {
+      "upload_name": "M3__app__src__main__assets__mosaedy_parser.js",
+      "original_path": "app/src/main/assets/mosaedy_parser.js",
+      "sha256": "66d6596e1b91102ffc4ab73694af7b952fedf74f3bffb9e5f0e258a6cde83607",
+      "size_bytes": 13516
+    },
+    {
+      "upload_name": "M3__app__src__main__assets__mosaedy_time.js",
+      "original_path": "app/src/main/assets/mosaedy_time.js",
+      "sha256": "ae033948b5c2918ec5da1ee6ca92b2869207b1279a9debe65b071e4a558ecabf",
+      "size_bytes": 890
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__AlarmActivity.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/AlarmActivity.java",
+      "sha256": "56759b47f6b4d3d1f8370da3f815ebba7447dfb92c088026d22f6487d9dc3257",
+      "size_bytes": 9343
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__AlarmRingingService.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/AlarmRingingService.java",
+      "sha256": "6a7c198dccac1d8a7c41d366dfaee10ba34063b92aea8855d8444bf054cafc28",
+      "size_bytes": 8556
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__BootReceiver.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/BootReceiver.java",
+      "sha256": "8bcd215f734cae6740aa7b4f3c95b2d5fee116edb1c3df7866050d61e5957c85",
+      "size_bytes": 616
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__MainActivity.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/MainActivity.java",
+      "sha256": "a32c791c6fe2ff00deb8136191e278b1429a95ff2bbbd3151f044cb22bd9b13e",
+      "size_bytes": 36717
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__NotificationActionReceiver.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/NotificationActionReceiver.java",
+      "sha256": "91da01e5a730c6fe3d176ba0f70bcc064e549f24a6f92e353b2ad2860c1441fb",
+      "size_bytes": 1987
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderNotifier.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderNotifier.java",
+      "sha256": "59a98e23b36396b54997f7f803d60aaf946427fac1928a1a630617d710b00bb0",
+      "size_bytes": 3743
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderReceiver.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderReceiver.java",
+      "sha256": "467e3f7dbff3fd48c0a42347d2bc730f521f585658b0fdc9f0dc6130b205064a",
+      "size_bytes": 2274
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderScheduler.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderScheduler.java",
+      "sha256": "f86442f6ae5c21a75cfb87874143ee18029376be117a13b218c5fa711a845c53",
+      "size_bytes": 6931
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__ReminderStore.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/ReminderStore.java",
+      "sha256": "4ba34d88b802e94aed114a8c1c7096ecb5c6957bb4aad76c1da409433e141633",
+      "size_bytes": 6761
+    },
+    {
+      "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__WakeWordService.java",
+      "original_path": "app/src/main/java/com/mosaedy/assistant/WakeWordService.java",
+      "sha256": "b39393be883ff631c56c71fa9d4523f422c05f587383b55e2d4dd5938f6232d8",
+      "size_bytes": 12715
+    },
+    {
+      "upload_name": "M3__app__src__main__res__drawable__ic_launcher.xml",
+      "original_path": "app/src/main/res/drawable/ic_launcher.xml",
+      "sha256": "e29eaeb981cb5361b9fb6a621109815146abe94d43bf5355311e1fcbe223c891",
+      "size_bytes": 723
+    },
+    {
+      "upload_name": "M3__app__src__main__res__values__strings.xml",
+      "original_path": "app/src/main/res/values/strings.xml",
+      "sha256": "2d4e6e14695b7c25c7418a1df26dac280d3f570294f06c632fa77b2992db3c7c",
+      "size_bytes": 75
+    },
+    {
+      "upload_name": "M3__app__src__main__res__xml__data_extraction_rules.xml",
+      "original_path": "app/src/main/res/xml/data_extraction_rules.xml",
+      "sha256": "d9064a7ac7e7df1d200997e35e4be275bd54f9f7c074d497dbb31405b573a82d",
+      "size_bytes": 270
+    },
+    {
+      "upload_name": "M3__build.gradle",
+      "original_path": "build.gradle",
+      "sha256": "36d655a9067d39892bba80896925f12e70f6b0d7481fe914ec6a61bbbde967cb",
+      "size_bytes": 73
+    },
+    {
+      "upload_name": "M3__gradle.properties",
+      "original_path": "gradle.properties",
+      "sha256": "4d4c82226865844bdc85391d907a383da4a35d3a3f5348985d5ec3997ab932fe",
+      "size_bytes": 76
+    },
+    {
+      "upload_name": "M3__settings.gradle",
+      "original_path": "settings.gradle",
+      "sha256": "fb890e15e7e533634a1bfe1f928424cbfb53eb14ea472d0805a25be21701d62c",
+      "size_bytes": 324
+    },
+    {
+      "upload_name": "M3__tests__commands.test.js",
+      "original_path": "tests/commands.test.js",
+      "sha256": "78568e74b50a7daae9f5550ec14aa72045a6ca33e34fc49bd575f2ffeb32451f",
+      "size_bytes": 1300
+    },
+    {
+      "upload_name": "M3__tests__parser.test.js",
+      "original_path": "tests/parser.test.js",
+      "sha256": "adfabeb4c5b6be90c6f5ecda87b3af2d59c8dc680fc99fe726b1ad8eb13f5b64",
+      "size_bytes": 2876
+    },
+    {
+      "upload_name": "M3__tests__time.test.js",
+      "original_path": "tests/time.test.js",
+      "sha256": "e82c9676798b11ab4c1e1b9678fd9f74b43fb777d8e7c79e7b01be6df6cd118d",
+      "size_bytes": 1013
+    },
+    {
+      "upload_name": "M3__tests__ui_features.test.js",
+      "original_path": "tests/ui_features.test.js",
+      "sha256": "b698c0b11d71e237ced864efa5fa324de5898364e041ece12fb01e0e587686d5",
+      "size_bytes": 3460
+    }
+  ]
+}
