@@ -13,8 +13,8 @@
     {
       "upload_name": "M3__LOCAL_TEST_RESULTS_AR.md",
       "original_path": "LOCAL_TEST_RESULTS_AR.md",
-      "sha256": "fc2878b8b25c45359b96bf82bdcf917ac718c12e674766e63ce30abfad365fee",
-      "size_bytes": 1678
+      "sha256": "08531f92cb912103df5edbb4ae3a872719d6a2f73ad47735e1e879ef179397d0",
+      "size_bytes": 2080
     },
     {
       "upload_name": "M3__README_AR.md",
@@ -25,8 +25,8 @@
     {
       "upload_name": "M3__RELEASE_NOTES_AR.md",
       "original_path": "RELEASE_NOTES_AR.md",
-      "sha256": "49b152b04e6dac2529fe0506b5187adcfa7aeb67ae037f1a819fa4abaca89c9e",
-      "size_bytes": 3289
+      "sha256": "7600e2b51ebe45c50eee92424581d55a5d08694cb2e614a2c1ce8a8c9c079fec",
+      "size_bytes": 3691
     },
     {
       "upload_name": "M3__TEST_PLAN_AR.md",
@@ -91,8 +91,8 @@
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__MainActivity.java",
       "original_path": "app/src/main/java/com/mosaedy/assistant/MainActivity.java",
-      "sha256": "a32c791c6fe2ff00deb8136191e278b1429a95ff2bbbd3151f044cb22bd9b13e",
-      "size_bytes": 36717
+      "sha256": "4d13f952fce89c0e5810695c6af1cb10c474d4574c40c3578a9a66abc9cbe95c",
+      "size_bytes": 36731
     },
     {
       "upload_name": "M3__app__src__main__java__com__mosaedy__assistant__NotificationActionReceiver.java",

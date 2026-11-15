@@ -196,9 +196,9 @@ public class MainActivity extends Activity {
         try {
             startActivityForResult(intent, REQ_SPEECH);
         } catch (ActivityNotFoundException e) {
-            callJs("window.onVoiceError && window.onVoiceError(" + JSONObject.quote("en".equals(lang) ? "Speech recognition is not available on this device." : "خدمة التعرف على الصوت غير متوفرة على الجهاز") + ")");
+            callJs("window.onVoiceError && window.onVoiceError(" + JSONObject.quote("en".equals(appLanguage) ? "Speech recognition is not available on this device." : "خدمة التعرف على الصوت غير متوفرة على الجهاز") + ")");
         } catch (SecurityException e) {
-            callJs("window.onVoiceError && window.onVoiceError(" + JSONObject.quote("en".equals(lang) ? "Please allow microphone access first." : "لازم تسمح باستخدام الميكروفون أولًا") + ")");
+            callJs("window.onVoiceError && window.onVoiceError(" + JSONObject.quote("en".equals(appLanguage) ? "Please allow microphone access first." : "لازم تسمح باستخدام الميكروفون أولًا") + ")");
         }
     }
 
