@@ -79,15 +79,34 @@ public class AlarmRingingService extends Service {
             if (wakeLock == null) wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Mosaedy:Alarm");
             if (!wakeLock.isHeld()) wakeLock.acquire();
         } catch (Exception ignored) { }
-        startForeground(ID, makeNotification(activeId, activeTitle)); stopSound();
-        try {
-            String saved = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("alarm_tone_uri", "");
-            Uri uri = saved.isEmpty() ? RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM) : Uri.parse(saved);
-            if (uri == null) uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            player = new MediaPlayer(); player.setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build());
-            player.setDataSource(this, uri); player.setLooping(true); player.prepare(); player.start();
-        } catch (Exception ignored) { stopSound(); }
+        startForeground(ID, makeNotification(activeId, activeTitle));
+        startSoundWithFallback();
         return START_NOT_STICKY;
+    }
+    private void startSoundWithFallback() {
+        stopSound();
+        String saved = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("alarm_tone_uri", "");
+        if (!saved.isEmpty() && tryStartTone(Uri.parse(saved))) return;
+        Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if (tryStartTone(alarm)) return;
+        tryStartTone(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+    }
+    private boolean tryStartTone(Uri uri) {
+        if (uri == null) return false;
+        MediaPlayer candidate = null;
+        try {
+            candidate = new MediaPlayer();
+            candidate.setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build());
+            candidate.setDataSource(this, uri);
+            candidate.setLooping(true);
+            candidate.prepare();
+            candidate.start();
+            player = candidate;
+            return true;
+        } catch (Exception ignored) {
+            if (candidate != null) { try { candidate.reset(); } catch (Exception ignoredReset) { } try { candidate.release(); } catch (Exception ignoredRelease) { } }
+            return false;
+        }
     }
     private void stopSound() { if (player != null) { try { player.stop(); } catch (Exception ignored) { } try { player.release(); } catch (Exception ignored) { } player = null; } }
     @Override public void onDestroy() { stopSound(); if (wakeLock != null && wakeLock.isHeld()) try { wakeLock.release(); } catch (Exception ignored) { } ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(ID); super.onDestroy(); }

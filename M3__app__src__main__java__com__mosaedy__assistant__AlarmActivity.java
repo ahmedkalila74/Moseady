@@ -2,6 +2,7 @@ package com.mosaedy.assistant;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,9 +18,10 @@ public class AlarmActivity extends Activity {
         super.onCreate(state);
         if (Build.VERSION.SDK_INT >= 27) { setShowWhenLocked(true); setTurnScreenOn(true); }
         else getWindow().addFlags(0x00080000 | 0x00200000);
-        getWindow().setStatusBarColor(Color.rgb(16,25,55));
+        getWindow().setStatusBarColor(Color.rgb(52,36,112));
+        getWindow().setNavigationBarColor(Color.rgb(25,20,57));
         LinearLayout root = new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL);
-        root.setGravity(Gravity.CENTER); root.setPadding(28,28,28,28); root.setBackgroundColor(Color.rgb(18,27,60));
+        root.setGravity(Gravity.CENTER); int pad=(int)(24*getResources().getDisplayMetrics().density); root.setPadding(pad,pad,pad,pad); root.setBackgroundColor(Color.rgb(35,27,83));
         boolean en = "en".equals(getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar"));
         TextView title = new TextView(this); title.setText(en ? "⏰ Mosaedy — Reminder time" : "⏰ مساعدي — حان موعد التذكير"); title.setTextColor(Color.WHITE); title.setTextSize(23); title.setGravity(Gravity.CENTER);
         TextView text = new TextView(this); text.setText(getIntent().getStringExtra("title")); text.setTextColor(Color.WHITE); text.setTextSize(19); text.setGravity(Gravity.CENTER); text.setPadding(0,28,0,28);
@@ -27,10 +29,10 @@ public class AlarmActivity extends Activity {
         TextView label = new TextView(this); label.setText(en ? "Snooze reminder" : "تأجيل التذكير"); label.setTextColor(Color.LTGRAY); label.setTextSize(14); label.setGravity(Gravity.CENTER); label.setPadding(0,8,0,8); root.addView(label);
         for (int minutes : snoozeOptions()) {
             Button snooze = new Button(this); snooze.setText(en ? "In " + minutes + " minutes" : "بعد " + minutes + " دقائق");
-            snooze.setOnClickListener(v -> { send(AlarmRingingService.ACTION_SNOOZE, minutes); finish(); }); root.addView(snooze);
+            snooze.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(115,88,220))); snooze.setTextColor(Color.WHITE); snooze.setOnClickListener(v -> { send(AlarmRingingService.ACTION_SNOOZE, minutes); finish(); }); root.addView(snooze);
         }
         Button stop = new Button(this); stop.setText(en ? "Stop alarm" : "إيقاف الألارم");
-        stop.setOnClickListener(v -> { send(AlarmRingingService.ACTION_STOP, 0); finish(); }); root.addView(stop);
+        stop.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(74,61,132))); stop.setTextColor(Color.WHITE); stop.setOnClickListener(v -> { send(AlarmRingingService.ACTION_STOP, 0); finish(); }); root.addView(stop);
         setContentView(root);
     }
     private ArrayList<Integer> snoozeOptions() {

@@ -3,6 +3,7 @@ package com.mosaedy.assistant;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,6 +40,8 @@ public class MainActivity extends Activity {
     private static final int REQ_NOTIFICATION = 1004;
     private static final int REQ_WAKE_MIC = 1005;
     private static final int REQ_RINGTONE = 1006;
+    private static final int REQ_VOICE_MIC = 1007;
+    private static final int REQ_MIC_SETTINGS = 1008;
     private static WeakReference<MainActivity> instance = new WeakReference<>(null);
     private boolean visible = false;
     private WebView web;
@@ -105,7 +108,7 @@ public class MainActivity extends Activity {
     private void openFromWake(Intent intent){if(intent==null)return;
         callJs("window.openTab && window.openTab('assistant')");
         String command=intent.getStringExtra("wake_command");
-        if(command!=null&&!command.trim().isEmpty()) callJs("window.handleMessage && window.handleMessage("+JSONObject.quote(command)+")");
+        if(command!=null&&!command.trim().isEmpty()) callJs("window.handleMessage && window.handleMessage("+JSONObject.quote(command)+", 'voice')");
         else callJs("window.onWakeDetected && window.onWakeDetected('wake','')");
     }
     private void beginWakeService(){
@@ -127,9 +130,37 @@ public class MainActivity extends Activity {
             else if (message.contains("تم استيراد")) message = "Reminders imported successfully";
             else if (message.contains("الملف غير صالح")) message = "The backup file is invalid or could not be read";
             else if (message.contains("لا يمكن الاستماع")) message = "Microphone permission is required for wake listening";
+            else if (message.contains("تم السماح باستخدام الميكروفون")) message = "Microphone access granted";
+            else if (message.contains("عرض الألارم بملء الشاشة مفعّل")) message = "Full-screen alarm display is enabled";
+            else if (message.contains("عرض الألارم بملء الشاشة متاح")) message = "Full-screen alarm display is available on this Android version";
+            else if (message.contains("افتح إعدادات التطبيق واسمح بعرض الألارم")) message = "Open app settings and allow full-screen alarm alerts";
+            else if (message.contains("المنبّهات الدقيقة مفعّلة")) message = "Exact alarms are enabled";
+            else if (message.contains("افتح إعدادات التطبيق واسمح بالمنبّهات")) message = "Open app settings and allow exact alarms";
+            else if (message.contains("لازم تسمح باستخدام الميكروفون")) message = "Please allow microphone access first";
+            else if (message.contains("ما وصلنيش كلام واضح")) message = "I could not get a clear transcript. Try a shorter recording and speak clearly.";
+            else if (message.contains("اسمح للميكروفون عشان أقدر أحوّل كلامك")) message = "Allow microphone access so I can transcribe your speech.";
         }
         final String display = message;
         runOnUiThread(() -> Toast.makeText(this, display, Toast.LENGTH_LONG).show());
+    }
+
+    private void launchSpeechRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        String lang = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar");
+        String locale = "en".equals(lang) ? "en-US" : "ar-EG";
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, locale);
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "en".equals(lang) ? "Speak clearly. You can review the transcript before saving." : "اتكلم بوضوح؛ هتقدر تراجع الكلام قبل حفظ التذكير.");
+        try {
+            startActivityForResult(intent, REQ_SPEECH);
+        } catch (ActivityNotFoundException e) {
+            callJs("window.onVoiceError && window.onVoiceError(" + JSONObject.quote("en".equals(lang) ? "Speech recognition is not available on this device." : "خدمة التعرف على الصوت غير متوفرة على الجهاز") + ")");
+        } catch (SecurityException e) {
+            callJs("window.onVoiceError && window.onVoiceError(" + JSONObject.quote("en".equals(lang) ? "Please allow microphone access first." : "لازم تسمح باستخدام الميكروفون أولًا") + ")");
+        }
     }
 
     public class Bridge {
@@ -192,7 +223,8 @@ public class MainActivity extends Activity {
                 try {
                     Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
                     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
-                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "اختيار نغمة ألارم مساعدي");
+                    boolean en = "en".equals(getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar"));
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, en ? "Choose Mosaedy alarm sound" : "اختيار نغمة ألارم مساعدي");
                     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
                     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
                     String saved = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("alarm_tone_uri", "");
@@ -215,6 +247,7 @@ public class MainActivity extends Activity {
                     int result = tts.setLanguage("en".equals(safe) ? Locale.US : new Locale("ar", "EG"));
                     ttsReady = result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED;
                 }
+                ReminderNotifier.ensureChannel(MainActivity.this);
             });
         }
 
@@ -223,6 +256,8 @@ public class MainActivity extends Activity {
                 JSONObject obj = new JSONObject();
                 obj.put("notificationsAllowed", ReminderNotifier.allowed(getApplicationContext()));
                 obj.put("exactAlarmsAllowed", ReminderScheduler.exactAllowed(getApplicationContext()));
+                NotificationManager notifications = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                obj.put("fullScreenIntentAllowed", Build.VERSION.SDK_INT < 34 || notifications.canUseFullScreenIntent());
                 obj.put("ttsReady", ttsReady);
                 obj.put("android", Build.VERSION.SDK_INT);
                 obj.put("wakeSession",WakeWordService.isActive());
@@ -259,6 +294,29 @@ public class MainActivity extends Activity {
             });
         }
 
+        @JavascriptInterface public void requestMicrophonePermission() {
+            runOnUiThread(() -> {
+                if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQ_MIC_SETTINGS);
+                } else showMessage("تم السماح باستخدام الميكروفون");
+            });
+        }
+
+        @JavascriptInterface public void requestFullScreenIntent() {
+            runOnUiThread(() -> {
+                if (Build.VERSION.SDK_INT >= 34) {
+                    NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    if (!manager.canUseFullScreenIntent()) {
+                        try {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
+                                Uri.parse("package:" + getPackageName()));
+                            startActivity(intent);
+                        } catch (Exception e) { showMessage("افتح إعدادات التطبيق واسمح بعرض الألارم بملء الشاشة"); }
+                    } else showMessage("عرض الألارم بملء الشاشة مفعّل");
+                } else showMessage("عرض الألارم بملء الشاشة متاح على هذا الإصدار");
+            });
+        }
+
         @JavascriptInterface public void configureWake(String phrase, boolean autoMic){
             String custom=phrase==null?"":phrase.trim().replaceAll("\\s+"," ");
             if(custom.length()>40)custom=custom.substring(0,40);
@@ -278,16 +336,10 @@ public class MainActivity extends Activity {
         });}
         @JavascriptInterface public void startVoiceInput() {
             runOnUiThread(() -> {
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                String lang = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar");
-                String locale = "en".equals(lang) ? "en-US" : "ar-EG";
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, locale);
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "en".equals(lang) ? "Tell Mosaedy what you need" : "اتفضل، قول لمساعدي طلبك");
-                try { startActivityForResult(intent, REQ_SPEECH); }
-                catch (ActivityNotFoundException e) {
-                    callJs("window.onVoiceError && window.onVoiceError('خدمة التعرف على الصوت غير متوفرة على الجهاز')");
+                if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQ_VOICE_MIC);
+                } else {
+                    launchSpeechRecognition();
                 }
             });
         }
@@ -330,6 +382,9 @@ public class MainActivity extends Activity {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (results != null && !results.isEmpty()) {
                 callJs("window.onSpeechCandidates && window.onSpeechCandidates(" + new JSONArray(results).toString() + ")");
+            } else {
+                String lang = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar");
+                callJs("window.onVoiceError && window.onVoiceError(" + JSONObject.quote("en".equals(lang) ? "I could not get a clear transcript. Try a shorter recording and speak clearly." : "ما وصلنيش كلام واضح. جرّب تسجيل أقصر وبصوت أوضح.") + ")");
             }
         } else if (requestCode == REQ_RINGTONE) {
             Uri picked = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
@@ -421,6 +476,18 @@ public class MainActivity extends Activity {
         if (requestCode == REQ_WAKE_MIC){
             if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)beginWakeService();
             else showMessage("لا يمكن الاستماع بدون السماح للميكروفون");
+        }
+        if (requestCode == REQ_VOICE_MIC) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) launchSpeechRecognition();
+            else {
+                String lang = getSharedPreferences("mosaedy_settings", MODE_PRIVATE).getString("language", "ar");
+                callJs("window.onVoiceError && window.onVoiceError(" + JSONObject.quote("en".equals(lang) ? "Allow microphone access so I can transcribe your speech." : "اسمح للميكروفون عشان أقدر أحوّل كلامك لنص.") + ")");
+            }
+        }
+        if (requestCode == REQ_MIC_SETTINGS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) showMessage("تم السماح باستخدام الميكروفون");
+            else showMessage("لا يمكن الاستماع بدون السماح للميكروفون");
+            callJs("window.nativeRefresh && window.nativeRefresh()");
         }
         if (requestCode == REQ_NOTIFICATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)

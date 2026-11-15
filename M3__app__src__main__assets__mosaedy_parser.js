@@ -1,4 +1,4 @@
-/* Mosaedy 3.3.1 local Egyptian Arabic reminder parser. No AI or network calls. */
+/* Mosaedy 3.4 local Arabic/English reminder parser. No AI or network calls. */
 (function (root) {
   'use strict';
   const AR = '٠١٢٣٤٥٦٧٨٩', FA = '۰۱۲۳۴۵۶۷۸۹';
@@ -9,11 +9,11 @@
   function formatTime(ms){return new Date(ms).toLocaleString('ar-EG',{weekday:'long',day:'numeric',month:'long',hour:'numeric',minute:'2-digit',second:'2-digit'});}
   const weekdays=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
   const enWeekdays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const enNumbers={'a':1,'an':1,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,'fifteen':15,'twenty':20,'thirty':30};
-  const wordNum='(?:\\d{1,5}|صفر|واحده?|واحدة|اتنين|اثنين|ثلاثة|تلاتة|تلات|اربعة|أربعة|خمسة|خمس|ستة|سته|سبعة|سبعه|ثمانية|تمانية|تسعة|تسعه|عشرة|عشر|خمستاشر|ربع|نص|نصف|one|a|an|two|three|four|five|six|seven|eight|nine|ten|fifteen|twenty|thirty)';
-  const unit='(?:ثواني|ثوان|ثانية|ثانيه|ثوانى|دقايق|دقائق|دقيقة|دقيقه|ساعة|ساعه|ساعات|ساعتين|يوم|يومين|ايام|أيام|اسبوع|أسبوع|اسابيع|أسابيع)';
-  const relativeRe = new RegExp('(?:بعد|كمان|خلال|من دلوقتي بعد)\\s+('+wordNum+')\\s*('+unit+')','i');
-  function unitMs(u){return /ثان/.test(u)?1000:/دق/.test(u)?60000:/ساع/.test(u)?3600000:/يوم|ايام|أيام/.test(u)?86400000:604800000;}
+  const enNumbers={'a':1,'an':1,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,'eleven':11,'twelve':12,'fifteen':15,'twenty':20,'thirty':30};
+  const wordNum='(?:\\d{1,5}(?:[.,]\\d+)?|صفر|واحده?|واحدة|اتنين|اثنين|ثلاثة|تلاتة|تلات|اربعة|أربعة|خمسة|خمس|ستة|سته|سبعة|سبعه|ثمانية|تمانية|تسعة|تسعه|عشرة|عشر|خمستاشر|ربع|نص|نصف|one|a|an|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty)';
+  const unit='(?:ثانيتين|ثواني|ثوان|ثانية|ثانيه|ثوانى|دقيقتين|دقايق|دقائق|دقيقة|دقيقه|ساعتين|ساعات|ساعة|ساعه|يومين|ايام|أيام|يوم|أسبوعين|اسبوعين|اسابيع|أسابيع|اسبوع|أسبوع)';
+  const relativeRe = new RegExp('(?:من دلوقتي بعد|بعد(?:\\s+كمان)?|كمان|خلال)\\s+('+wordNum+')\\s*('+unit+')','i');
+  function unitMs(u){if(/ثانيتين/.test(u))return 2000;if(/دقيقتين/.test(u))return 120000;if(/ساعتين/.test(u))return 7200000;if(/يومين/.test(u))return 172800000;if(/أسبوعين|اسبوعين/.test(u))return 1209600000;return /ثان/.test(u)?1000:/دق/.test(u)?60000:/ساع/.test(u)?3600000:/يوم|ايام|أيام/.test(u)?86400000:604800000;}
   function removeSpan(s,match){return match?s.slice(0,match.index)+' '+s.slice(match.index+match[0].length):s;}
   function parse(input,nowMs,options={}){
     let original=String(input||'').trim(), text=normalized(input), now=new Date(nowMs==null?Date.now():nowMs);
@@ -26,13 +26,13 @@
     let relative=relativeRe.exec(text);
     if(relative){let n=val(relative[1]);if(Number.isFinite(n)&&n>=0){due=now.getTime()+Math.max(1000,Math.round(n*unitMs(relative[2])));rest=removeSpan(rest,relative);matchedTime=true;}}
     if(due===null){
-      const enRel=/\b(?:in|after)\s+(a|an|one|two|three|four|five|six|seven|eight|nine|ten|fifteen|twenty|thirty|\d{1,5})\s*(seconds?|secs?|minutes?|mins?|hours?|days?|weeks?)\b/i.exec(text);
-      if(enRel){let n=/^\d+$/.test(enRel[1])?Number(enRel[1]):enNumbers[enRel[1].toLowerCase()];let u=enRel[2].toLowerCase();let ms=/sec/.test(u)?1000:/min/.test(u)?60000:/hour/.test(u)?3600000:/day/.test(u)?86400000:604800000;due=now.getTime()+Math.max(1000,Math.round(n*ms));rest=removeSpan(rest,enRel);matchedTime=true;}
+      const enRel=/\b(?:in|after)\s+(a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|\d{1,5}(?:[.,]\d+)?)\s*(seconds?|secs?|minutes?|mins?|hours?|days?|weeks?)\b/i.exec(text);
+      if(enRel){let n=/^\d/.test(enRel[1])?Number(enRel[1].replace(',','.')):enNumbers[enRel[1].toLowerCase()];let u=enRel[2].toLowerCase();let ms=/sec/.test(u)?1000:/min/.test(u)?60000:/hour/.test(u)?3600000:/day/.test(u)?86400000:604800000;due=now.getTime()+Math.max(1000,Math.round(n*ms));rest=removeSpan(rest,enRel);matchedTime=true;}
       else {const enShort=/\b(?:in|after)\s+(a minute|one minute|a second|one second|an hour|one hour|half an hour|half hour|a day|one day)\b/i.exec(text);if(enShort){let v=enShort[1].toLowerCase();let ms=/second/.test(v)?1000:/minute/.test(v)?60000:/hour/.test(v)?3600000:86400000;if(/half/.test(v))ms/=2;due=now.getTime()+ms;rest=removeSpan(rest,enShort);matchedTime=true;}}
     }
     if(due===null){
-      let shorthand=/(?:بعد|كمان)\s+(ساعتين|يومين|نص\s+ساعة|نصف\s+ساعة|ربع\s+ساعة|ساعة\s+ونص|ساعه\s+ونص|نص\s+دقيقة|ساعة|دقيقة|ثانية)/i.exec(text);
-      if(shorthand){let s=shorthand[1],delta=/ساعتين/.test(s)?7200000:/يومين/.test(s)?172800000:/ربع/.test(s)?900000:/ساعة\s+ونص|ساعه\s+ونص/.test(s)?5400000:/نص|نصف/.test(s)?(/دقيقة/.test(s)?30000:1800000):/ثانية/.test(s)?1000:/ساعة/.test(s)?3600000:60000;due=now.getTime()+delta;rest=removeSpan(rest,shorthand);matchedTime=true;}
+      let shorthand=/(?:بعد(?:\s+كمان)?|كمان)\s+(أسبوعين|اسبوعين|ساعتين|يومين|دقيقتين|ثانيتين|نص\s+ساعة|نصف\s+ساعة|ربع\s+ساعة|ساعة\s+ونصف|ساعه\s+ونصف|ساعة\s+ونص|ساعه\s+ونص|نص\s+دقيقة|ساعة|ساعه|دقيقة|دقيقه|ثانية|ثانيه)/i.exec(text);
+      if(shorthand){let s=shorthand[1],delta=/أسبوعين|اسبوعين/.test(s)?1209600000:/ساعتين/.test(s)?7200000:/يومين/.test(s)?172800000:/دقيقتين/.test(s)?120000:/ثانيتين/.test(s)?2000:/ربع/.test(s)?900000:/ساعة\s+ونصف|ساعه\s+ونصف|ساعة\s+ونص|ساعه\s+ونص/.test(s)?5400000:/نص|نصف/.test(s)?(/دقيقة/.test(s)?30000:1800000):/ثانية|ثانيه/.test(s)?1000:/دقيق/.test(s)?60000:/ساعة|ساعه/.test(s)?3600000:60000;due=now.getTime()+delta;rest=removeSpan(rest,shorthand);matchedTime=true;}
     }
     if(due===null && /(?:دلوقتي|حالاً|حالا|الان|الآن)/.test(text) && !/(?:الساعة|الساعه)/.test(text)){
       due=now.getTime()+3000;rest=rest.replace(/(?:دلوقتي|حالاً|حالا|الان|الآن)/g,' ');matchedTime=true;

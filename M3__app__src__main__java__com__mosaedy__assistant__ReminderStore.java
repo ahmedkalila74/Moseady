@@ -32,6 +32,14 @@ public final class ReminderStore {
         }
         return null;
     }
+    public static synchronized JSONObject findHistory(Context context, String id) {
+        JSONArray arr = history(context);
+        for (int i = arr.length() - 1; i >= 0; i--) {
+            JSONObject r = arr.optJSONObject(i);
+            if (r != null && id.equals(r.optString("id"))) return r;
+        }
+        return null;
+    }
     public static synchronized void put(Context context, JSONObject reminder) throws JSONException {
         String id = reminder.optString("id", "");
         String title = reminder.optString("title", "").trim();
